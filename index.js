@@ -5,9 +5,6 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const connectDB = require("./configs/mongodb_config");
 const path = require("path");
-// const passport = require("passport");
-// const expressSession = require("express-session");
-// const MongoStore = require("connect-mongo");
 
 const app = express();
 
@@ -29,34 +26,11 @@ app.set("trust proxy", 1);
 // Logger
 app.use(morgan("common"));
 
-// app.use(
-//   expressSession({
-//     secret: "hQSjNdMPob5j+Z3jfaHg6vKn1Hr0vqVd",
-//     resave: true,
-//     saveUninitialized: true,
-//     cookie: {
-//       // Session expires after 24 hrs of inactivity.
-//       maxAge: 60 * 60 * 24 * 1000,
-//       sameSite: "none",
-//       secure: process.env.NODE_ENV === "production" ? true : false,
-//     },
-//     store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-//   })
-// );
-
-// app.use(cookieSession({
-// 	name: 'session',
-// 	keys: ['asthetech_website_private_key_3010'],
-// 	maxAge: 24 * 60 * 60 * 1000 // 24 hours
-// }));
-
-// app.use(passport.initialize());
-// app.use(passport.session());
-
 // Importing Routes
 const authRoute = require("./routes/auth.routes");
+const adminRoute = require("./routes/admin.routes");
 
-// app.use("/api/middleware", middlewareRoute);
+app.use("/api/admin", adminRoute);
 
 // Route Middlewares
 app.use("/api/auth", authRoute);
