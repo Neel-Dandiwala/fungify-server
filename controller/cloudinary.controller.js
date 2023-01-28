@@ -1,28 +1,39 @@
-const cloudinary = require("cloudinary");
+// Functions to upload images to the cloudinary
+const cloudinary = require("../configs/cloudinary");
 
-//config
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-exports.upload = async (req, res) => {
-  let result = await cloudinary.uploader.upload(req.body.image, {
-    public_id: `${Date.now()}`,
-    resource_type: "auto",
-  });
-  res.json({
-    public_id: result.public_id,
-    url: result.secure_url,
-  });
-};
+const imageUploadOptions = {
+    // folder: process.env.CLOUDINARY_ENTITY_PROFILE_IMAGE_FOLDER,
+    // resource_type: "image",
+    upload_preset: "nft",
+}
 
-exports.remove = (req, res) => {
-  let resume_id = req.body.asset_id;
-  console.log(resume_id);
-  cloudinary.uploader.destroy(resume_id, (err, result) => {
-    if (err) return res.json({ success: false, err });
-    console.log(result);
-    res.send("ok");
-  });
-};
+
+/**
+Uploads single image to cloudinary. Assumes that the image is base64 encoded.
+@param {String} imageBase64 base64 encoded image data
+@returns {String} secure_url - URL of the image on the cloudinary server with https protocol
+@throws {Error} error - Error object if anything goes wrong
+*/
+async function uploadImage(imageBase64) {
+    try {
+        // The secure_url is the url of the image on the cloudinary server with https protocol
+        let secure_url = null;
+
+        // The cloudinary.uploader.upload() function returns a promise
+        // It takes in the path of the image to be uploaded and the upload options
+        // We can even pass in base64 encoded image data in the .upload() function
+        await cloudinary.uploader.upload(imageBase64, imageUploadOptions, (error, result) => {
+            if (error) {
+                throw error;
+            } else {
+                secure_url = result.secure_url;
+            }
+        });
+
+        return secure_url;
+    } catch (error) {
+        throw error;
+    }
+}
+
+module.exports = { uploadImage };

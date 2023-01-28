@@ -10,12 +10,10 @@ const Nftschema = new mongoose.Schema(
 
     organization: {
       type: String,
-      index: true,
       required: true,
     },
-    file: {
-      type: Array,
-      required: true,
+    image: {
+      type: String,
     },
     price: {
       type: Number,
@@ -24,14 +22,16 @@ const Nftschema = new mongoose.Schema(
     approve: {
       value: false,
     },
-    totalshares: {
+    shares: {
       type: Number,
     },
     user: {
       type: Map,
+      of: String,
+      require: true,
     },
   },
   { timestamps: true } // createdAt, updatedAt timestamps will be taken care of by this automatically
 );
 
-module.exports = mongoose.model("Nft-data", Nftschema, "nft-data");
+module.exports = mongoose.model("Nft", Nftschema, "nft");

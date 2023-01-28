@@ -5,15 +5,14 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const connectDB = require("./configs/mongodb_config");
 const path = require("path");
-
 const app = express();
-
+const bodyParser = require('body-parser');
 // Mongoose Connection
 connectDB();
 
 app.use(express.json());
 app.use(helmet());
-
+app.use(bodyParser.json());
 app.use(
   cors({
     origin: [process.env.CLIENT_URL, "*"],
@@ -29,11 +28,14 @@ app.use(morgan("common"));
 // Importing Routes
 const authRoute = require("./routes/auth.routes");
 const adminRoute = require("./routes/admin.routes");
+const nftRoutes = require('./routes/nft.routes')
 
 app.use("/api/admin", adminRoute);
 
 // Route Middlewares
 app.use("/api/auth", authRoute);
+
+app.use("/api/nft", nftRoutes);
 
 // Serve static assets if in production
 app.use("/", function (req, res) {
