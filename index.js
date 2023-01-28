@@ -37,6 +37,7 @@ const main = async () => {
   const nftRoutes = require('./routes/nft.routes');
   // const ACoinRoutes = require('./routes/ACoinRoutes');
   app.use(require('./routes/ACoinRoutes'));
+  app.use(require('./routes/DivisibleNFTRoutes'));
 
 
   app.use("/api/admin", adminRoute);
