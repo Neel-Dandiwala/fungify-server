@@ -18,14 +18,15 @@ router.post("/add-nft",
       const dataUri = generateDataUri(req.file);
 
       // // Save the profile image file to the database
-      const secure_url = await uploadImage(dataUri.content);
+      const { secure_url, public_id } = await uploadImage(dataUri.content);
       console.log(secure_url);
 
-      const { name, organization, image, price, shares, user } = req.body;
+      const { name, organization, price, shares, user } = req.body;
       console.log(req.body);
       const nftData = new nft({
         name,
         organization,
+        tokenId: public_id,
         image: secure_url,
         price: parseInt(price),
         shares: parseInt(shares),
