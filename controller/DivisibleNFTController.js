@@ -6,7 +6,7 @@ const _mint = async (req, res) => {
     const _tokenId = req.body.tokenId;
     const _divisibility = req.body.divisibility;
     let logs;
-    const divisibleNftsContract = new web3().eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
+    const divisibleNftsContract =  new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
     await divisibleNftsContract.methods.mint(_owner, _tokenId, _divisibility).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
@@ -36,7 +36,7 @@ const _transferToken = async (req, res) => {
     const _tokenId = req.body.tokenId;
     const _units = req.body.units;
     let logs;
-    const divisibleNftsContract = new web3().eth.Contract(web3_1.DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
+    const divisibleNftsContract =  new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
     await divisibleNftsContract.methods.transferToken(_from, _to, _tokenId, _units).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
@@ -64,7 +64,7 @@ const _unitsOwnedOfAToken = async (req, res) => {
     const _owner = req.body.owner;
     const _tokenId = req.body.tokenId;
     let logs;
-    const divisibleNftsContract = new (web3_1.web3.getWeb3()).eth.Contract(web3_1.DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
+    const divisibleNftsContract =  new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
     await divisibleNftsContract.methods.unitsOwnedOfAToken(_owner, _tokenId).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
@@ -88,7 +88,7 @@ const _unitsOwnedOfAToken = async (req, res) => {
 const _divisibilityOfAToken = async (req, res) => {
     const _tokenId = req.body.tokenId;
     let logs;
-    const divisibleNftsContract = new (web3_1.web3.getWeb3()).eth.Contract(web3_1.DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
+    const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
     await divisibleNftsContract.methods.divisibilityOfAToken(_tokenId).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
@@ -111,7 +111,7 @@ const _divisibilityOfAToken = async (req, res) => {
 };
 const _totalSupplyView = async (req, res) => {
     let logs;
-    const divisibleNftsContract = new (web3_1.web3.getWeb3()).eth.Contract(web3_1.DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
+    const divisibleNftsContract =  new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
     await divisibleNftsContract.methods.totalSupplyView().send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
