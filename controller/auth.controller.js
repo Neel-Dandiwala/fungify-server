@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
-const User = require("../modal/user.modal");
+const User = require("../model/user.model");
 
 exports.registerController = (req, res) => {
   const { name, email, password, walletAddress, balance } = req.body;

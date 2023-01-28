@@ -28,7 +28,7 @@ app.use(morgan("common"));
 // Importing Routes
 const authRoute = require("./routes/auth.routes");
 const adminRoute = require("./routes/admin.routes");
-const nftRoutes = require('./routes/nft.routes')
+const nftRoutes = require('./routes/nft.routes');
 
 app.use("/api/admin", adminRoute);
 

@@ -4,7 +4,7 @@ const {
 } = require("../controller/nft.controller");
 const upload = require('./../middleware/multer.middleware');
 const generateDataUri = require("../utils/dataUriParser");
-const nft = require("../modal/nft.modal");
+const nft = require("../model/nft.model");
 const express = require("express");
 const router = express.Router();
 const { uploadImage } = require("../controller/cloudinary.controller");
