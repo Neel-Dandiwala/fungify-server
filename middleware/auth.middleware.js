@@ -3,9 +3,7 @@ const userModel = require("../modal/user.modal");
 // const User = require("../model/user.modal");
 
 exports.verifyuser = async (req, res, next) => {
-  const tok = req.headers.cookie;
-  const authHeader = tok.split("=")[1].split(";")[0];
-  // console.log(authHeader);
+  const authHeader = req.headers.authtoken;
 
   if (authHeader) {
     const token = authHeader;
@@ -14,13 +12,13 @@ exports.verifyuser = async (req, res, next) => {
       if (err) {
         return res.status(403).json("Token is not valid!");
       }
-
-      const student = await userModel.findOne({ _id: user._id });
-
-      if (!student) {
+      console.log(user);
+      const userData = await userModel.findOne({ _id: user._id });
+      console.log(userData);
+      if (!userData) {
         return res.status(403).json("User not found!");
       }
-      req.user = user;
+      req.user = userData;
       next();
     });
   } else {
