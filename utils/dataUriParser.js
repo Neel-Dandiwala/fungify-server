@@ -7,6 +7,7 @@ const path = require('path');
  * @returns data_uri - returns the data uri of the file
  */
 function generateDataUri(file) {
+    console.log(file);
     const extName = path.extname(file.originalname).toString();
     return new DataUriParser().format(extName, file.buffer);
 }

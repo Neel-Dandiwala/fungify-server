@@ -26,8 +26,7 @@ const Nftschema = new mongoose.Schema(
       type: Number,
     },
     user: {
-      type: Map,
-      of: String,
+      type: Object,
       require: true,
     },
   },
