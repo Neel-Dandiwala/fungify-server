@@ -1,6 +1,7 @@
 const {
   updateNftData,
   getOneNftData,
+  getAllApprovedNFTS,
 } = require("../controller/nft.controller");
 const upload = require('./../middleware/multer.middleware');
 const generateDataUri = require("../utils/dataUriParser");
@@ -52,5 +53,6 @@ router.post("/add-nft",
 );
 router.get("/one_nft/:id", getOneNftData);
 router.post("/update_nft_data/:id", updateNftData);
+router.get('/apporved-nfts', getAllApprovedNFTS);
 
 module.exports = router;

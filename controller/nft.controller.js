@@ -77,3 +77,19 @@ exports.updateNftData = async (req, res) => {
     });
   });
 };
+
+//to get all approved NFTS
+exports.getAllApprovedNFTS = async (req, res) => {
+  await NftModel.find({ approved: true }).exec((err, data) => {
+    if (err) {
+      return res.status(400).json({
+        error: "Error occured",
+      });
+    }
+    return res.status(200).json({
+      message: "NFT data! added successfully",
+      success: true,
+      nft: data,
+    });
+  })
+}
