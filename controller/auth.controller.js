@@ -82,7 +82,8 @@ exports.loginController = (req, res) => {
         });
       }
 
-      if (!(await user.authenticate(password))) {
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
         return res.status(400).json({
           error: "Email and password do not match",
         });
@@ -116,7 +117,7 @@ exports.fetchUserDataByEmail = async (req, res) => {
   // req.user contains the user id stored from in the session cookie
   console.log(req.body);
   // const { email } = req.user;
-  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"+req.user);
+  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu" + req.user);
   await User.findOne({
     email: req.user.email,
   }).exec((err, user) => {
@@ -125,7 +126,7 @@ exports.fetchUserDataByEmail = async (req, res) => {
         error: "User does not exists. Please register",
       });
     }
-    console.log("andar walaa "+user);
+    console.log("andar walaa " + user);
     return res.status(200).json({
       message: "User is fetch successfully!",
       success: true,
