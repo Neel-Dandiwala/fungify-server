@@ -3,11 +3,11 @@ const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
 const helmet = require("helmet");
-const connectDB = require("./config/mongodb_config");
+const connectDB = require("./configs/mongodb_config");
 const path = require("path");
 // const passport = require("passport");
 // const expressSession = require("express-session");
-const MongoStore = require("connect-mongo");
+// const MongoStore = require("connect-mongo");
 
 const app = express();
 

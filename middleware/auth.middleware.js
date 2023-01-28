@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const userModel = require("../model/user.model");
-const User = require("../model/user.model");
+const userModel = require("../modal/user.modal");
+// const User = require("../model/user.modal");
 
 exports.verifyuser = async (req, res, next) => {
   const tok = req.headers.cookie;

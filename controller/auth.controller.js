@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 const User = require("../modal/user.modal");
 exports.registerController = (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, walletAddress, balance } = req.body;
 
   const errors = validationResult(req);
 
@@ -18,7 +18,7 @@ exports.registerController = (req, res) => {
     }).exec(async (err, user) => {
       if (user) {
         return res.status(400).json({
-          error: "Student already exists",
+          error: "User already exists",
         });
       } else {
         const salt = await bcrypt.genSalt(10);
@@ -26,6 +26,8 @@ exports.registerController = (req, res) => {
         const user = new User({
           username,
           email,
+          walletAddress,
+          balance,
           password: hashed_password,
         });
         console.log(user);

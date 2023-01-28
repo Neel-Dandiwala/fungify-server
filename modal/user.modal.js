@@ -18,6 +18,14 @@ const userSchema = new mongoose.Schema(
       index: true,
       required: true,
     },
+    walletAddress: {
+      type: String,
+      required: true
+    },
+    balance: {
+      type: String,
+      required: true
+    },
     wallet: {
       type: Number,
     },

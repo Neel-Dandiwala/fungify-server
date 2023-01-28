@@ -4,7 +4,7 @@ module.exports = connnectDB = async () => {
   try {
     const con = await mongoose.connect(process.env.MONGODB_URI, {
       useNewUrlParser: true,
-      useCreateIndex: true,
+      // useCreateIndex: true,
       useUnifiedTopology: true,
     });
     console.log(`MongoDB connnected: ${con.connection.host}`);
