@@ -5,7 +5,7 @@ exports.approveNft = async (req, res) => {
   const { id } = req.params;
   nftModel
     .findByIdAndUpdate(
-      { id },
+      { _id: id },
       {
         ...{
           approved,
@@ -28,7 +28,7 @@ exports.approveNft = async (req, res) => {
 };
 
 exports.getnftData = async (req, res) => {
-  await NftModal.find({}).exec((err, data) => {
+  await nftModel.find({}).exec((err, data) => {
     if (err) {
       return res.status(400).json({
         error: "Error occured",
@@ -43,7 +43,7 @@ exports.getnftData = async (req, res) => {
 
 exports.deleteOneNftData = async (req, res) => {
   const { id } = req.params;
-  NftModal.findOneAndDelete({ id }).exec((err, data) => {
+  nftModel.findOneAndDelete({ id }).exec((err, data) => {
     if (err) {
       return res.status(400).json({
         error: "Error occured",
