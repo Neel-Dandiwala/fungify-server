@@ -4,17 +4,17 @@ const { web3,  DivisibleNftsABI} = require('../web3')
 const _mint = async (req, res) => {
     const _owner = req.body.owner;
     const _tokenId = req.body.tokenId;
-    const _divisibility = req.body.divisibility;
+    const _noOfShares = req.body.noOfShares;
     let logs;
     const divisibleNftsContract =  new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await divisibleNftsContract.methods.mint(_owner, _tokenId, _divisibility).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
+    await divisibleNftsContract.methods.mint(_owner, _tokenId, _noOfShares).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
         .then(function (blockchain_result) {
         console.log(blockchain_result);
         logs = {
             owner: blockchain_result.events.mintEvent.returnValues._owner,
             tokenId: blockchain_result.events.mintEvent.returnValues._tokenId,
-            divisible: blockchain_result.events.mintEvent.returnValues._divisible,
-            totalSupply: blockchain_result.events.mintEvent.returnValues._totalSupply,
+            divisible: blockchain_result.events.mintEvent.returnValues._noOfShares,
+            tokenTotalSupply: blockchain_result.events.mintEvent.returnValues._tokenTotalSupply,
             message: blockchain_result.events.mintEvent.returnValues._message,
         };
         res.status(200).json(logs);

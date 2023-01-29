@@ -93,8 +93,7 @@ const _burnACoin = async (req, res) => {
                 account: burnACoin_result.events.burnACoinEvent.returnValues._account,
                 numACoins: burnACoin_result.events.burnACoinEvent.returnValues._numACoins,
             };
-            res.status(200).json(logs);
-            return;
+            
         }).catch((err) => {
             console.log(err);
             logs =
@@ -105,7 +104,8 @@ const _burnACoin = async (req, res) => {
             res.status(400).json(logs);
             return { logs };
         });
-      return;
+        res.status(200).json(logs);
+        return;;
     })
     .catch((err) => {
       console.log(err);
