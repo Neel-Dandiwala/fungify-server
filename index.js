@@ -13,7 +13,30 @@ const Web3 = require("web3");
 
 const main = async () => {
   // Mongoose Connection
-  connectDB();
+  const con = await connectDB();
+  
+  
+  try {
+    // console.log(await web3.eth.getBlockNumber());
+    // const webya = Web3(web3T)
+    web3config(con).then(async() => {
+      try {
+        console.log(await (web3()).eth.getBlockNumber()); 
+      } catch(e) {
+        console.log(e)
+      }
+    })
+    // console.log(await (web3(_web3.web3_link)).eth.getBlockNumber());
+    // const _balance = 
+    // console.log(_balance)
+    
+  } catch (err) {
+    console.log("Change the ngrok link! ", err);
+  }
+
+
+
+  
 
   app.use(express.json());
   app.use(helmet());
@@ -34,6 +57,7 @@ const main = async () => {
   const authRoute = require("./routes/auth.routes");
   const adminRoute = require("./routes/admin.routes");
   const nftRoutes = require("./routes/nft.routes");
+  const tradingRoutes = require("./routes/stockMarket.routes")
   // const ACoinRoutes = require('./routes/ACoinRoutes');
   app.use(require("./routes/ACoinRoutes"));
   app.use(require("./routes/DivisibleNFTRoutes"));
