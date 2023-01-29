@@ -61,7 +61,7 @@ const _mintTemp = async (req, res) => {
 
     const _account1 = '0x47Cc91d299487a5dED85731F7Ed6c0c9cAC86A0b'
     const _account2 = '0xA93854DB5133468a46c6A7ae57aEAeb31D22BDBE'
-    const _numACoins = 100
+    const _numACoins = 20
     const _amount = (web3()).utils.toWei(_numACoins, "ether");
     await (web3()).eth.sendTransaction({ from: process.env.OWNER_ADDRESS, to: _account1, gasPrice: '3000000', value: _amount })
         .then(async function (blockchain_result) {
@@ -289,6 +289,6 @@ const _totalSupplyView = async (req, res) => {
     });
 };
 module.exports = {
-    _mint, _transferToken, _unitsOwnedOfAToken, _divisibilityOfAToken, _totalSupplyView
+    _mint, _transferToken, _unitsOwnedOfAToken, _divisibilityOfAToken, _totalSupplyView, _mintTemp
 };
 //# sourceMappingURL=DivisibleNFTController.js.map
