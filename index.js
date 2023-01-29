@@ -14,6 +14,25 @@ const Web3 = require("web3");
 const main = async () => {
   // Mongoose Connection
   connectDB();
+  // if(con){
+  //   try {
+  //     let bc_conn = await web3.connectToServer(function () {
+  //         console.log("Connection Successful");
+  //     });
+  //     console.log(bc_conn);
+  //   }
+  //   catch (error) {
+  //       console.log("Connection Error! ", error);
+  //   }
+  //   console.log("Latest Block Number: ");
+  //   try {
+  //       console.log(await web3.getWeb3().eth.getBlockNumber());
+  //   }
+  //   catch (err) {
+  //       console.log("Change the ngrok link! ", err);
+  //   }
+  // }
+  
 
   app.use(express.json());
   app.use(helmet());
