@@ -76,6 +76,8 @@ const main = async () => {
     const web3T = web3();
     // const webya = Web3(web3T)
     console.log(await web3T.eth.getBlockNumber());
+    // const _balance = 
+    // console.log(_balance)
   } catch (err) {
     console.log("Change the ngrok link! ", err);
   }

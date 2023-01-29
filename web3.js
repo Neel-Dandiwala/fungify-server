@@ -33,10 +33,10 @@ let _web3;
 
 exports.web3 = () => {
     return new Web3(
-    new Web3.providers.HttpProvider('https://e159-103-250-36-82.ngrok.io'));
+    new Web3.providers.HttpProvider('https://4781-42-106-240-177.ngrok.io'));
 }
 
 // exports.web3 = async () => {
-    
+
 
 exports.DivisibleNftsABI = JSON.parse(fs.readFileSync('blockchain/build/contracts/DivisibleNFTs.json', 'utf-8'));
