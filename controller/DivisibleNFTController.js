@@ -13,7 +13,7 @@ const _mint = async (req, res) => {
         logs = {
             owner: blockchain_result.events.mintEvent.returnValues._owner,
             tokenId: blockchain_result.events.mintEvent.returnValues._tokenId,
-            divisible: blockchain_result.events.mintEvent.returnValues._noOfShares,
+            noOfShares: blockchain_result.events.mintEvent.returnValues._noOfShares,
             tokenTotalSupply: blockchain_result.events.mintEvent.returnValues._tokenTotalSupply,
             message: blockchain_result.events.mintEvent.returnValues._message,
         };
@@ -30,6 +30,7 @@ const _mint = async (req, res) => {
         return { logs };
     });
 };
+
 const _transferToken = async (req, res) => {
     const _from = req.body.from;
     const _to = req.body.to;

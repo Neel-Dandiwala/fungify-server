@@ -66,6 +66,8 @@ const main = async () => {
   // Route Middlewares
   app.use("/api/auth", authRoute);
 
+  app.use("/api/trade", tradingRoutes);
+
   app.use("/api/nft", nftRoutes);
 
   // Serve static assets if in production
