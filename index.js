@@ -8,31 +8,12 @@ const path = require("path");
 const app = express();
 const bodyParser = require("body-parser");
 const connection = require("./connection");
-const { web3 } = require("./web3");
+const { web3, web3config } = require("./web3");
 const Web3 = require("web3");
 
 const main = async () => {
   // Mongoose Connection
   connectDB();
-  // if(con){
-  //   try {
-  //     let bc_conn = await web3.connectToServer(function () {
-  //         console.log("Connection Successful");
-  //     });
-  //     console.log(bc_conn);
-  //   }
-  //   catch (error) {
-  //       console.log("Connection Error! ", error);
-  //   }
-  //   console.log("Latest Block Number: ");
-  //   try {
-  //       console.log(await web3.getWeb3().eth.getBlockNumber());
-  //   }
-  //   catch (err) {
-  //       console.log("Change the ngrok link! ", err);
-  //   }
-  // }
-  
 
   app.use(express.json());
   app.use(helmet());
@@ -62,6 +43,8 @@ const main = async () => {
   // Route Middlewares
   app.use("/api/auth", authRoute);
 
+  app.use("/api/trade", tradingRoutes);
+
   app.use("/api/nft", nftRoutes);
 
   // Serve static assets if in production
@@ -90,16 +73,7 @@ const main = async () => {
   //     console.log("Change the ngrok link! ", err);
   //   }
   // });
-  try {
-    // console.log(await web3.eth.getBlockNumber());
-    const web3T = web3();
-    // const webya = Web3(web3T)
-    console.log(await web3T.eth.getBlockNumber());
-    // const _balance = 
-    // console.log(_balance)
-  } catch (err) {
-    console.log("Change the ngrok link! ", err);
-  }
+  
 
   // PORT
   const port = process.env.PORT || 5000;

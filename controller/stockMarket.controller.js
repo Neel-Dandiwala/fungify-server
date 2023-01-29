@@ -1,28 +1,33 @@
-// const { placeBuyOrderForNFTShare, placeSellOrderForNFTShare, getCurrentPriceOfNFTShare } = require('../services/stockMarket.service')
+const stockMarketService = require("../services/stockMarket");
 
-// const stockMarketService = require("../services/stockMarket");
-
-const stockMarketService = new StockMarketService();
-
-function placeBuyOrderForNFTShare(req, res) {
-    const { nftId, shares, price } = req.body;
-    const { userId } = req.user;
+async function placeBuyOrderForNFTShare(req, res) {
+    const { nftId, shares, price, userAddress } = req.body;
     if (!nftId || !shares || !price) {
         return res.status(400).json({
             error: "Invalid Data",
         });
     }
-    stockMarketService.placeBuyOrderForNFTShare(nftId, shares, price, userId, (err, data) => {
-        if (err) {
-            return res.status(400).json({
-                error: err,
-            });
-        }
-        return res.status(200).json({
-            message: "Buy Order Placed Successfully",
-            success: true,
-            data: data,
-        });
+
+    // TODO: Check if the user has enough balance to buy the shares
+    // let userBalance = await checkUserBalance(userId, price);
+    // if (userBalance < price) {           // ---> assuming that this condition is false
+    //     return callback("Insufficient Balance");
+    // }
+    var data = await dynamicBuyOrderModel(nftId).create({
+        quantity: shares, price, userAddress
+    });
+
+    var orderConfirmed = await checkAndExecuteIfAnySellOrderExists(nftId, shares, price, userAddress);
+
+    // TODO: Deduct the user balance
+    // TODO: Add the shares to the user's wallet
+    // TODO: Invoke Blockchain code to transfer the shares to the user's wallet
+
+    return res.status(200).json({
+        message: "Buy Order Placed Successfully",
+        success: true,
+        data: data,
+        orderConfirmed: orderConfirmed,
     });
 }
 
@@ -70,4 +75,4 @@ function getCurrentPriceOfNFTShare(req, res) {
 }
 
 
-export default { placeBuyOrderForNFTShare, placeSellOrderForNFTShare, getCurrentPriceOfNFTShare }
+module.exports = { placeBuyOrderForNFTShare, placeSellOrderForNFTShare, getCurrentPriceOfNFTShare }
