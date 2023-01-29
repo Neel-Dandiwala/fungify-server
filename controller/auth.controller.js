@@ -81,11 +81,13 @@ exports.loginController = (req, res) => {
         });
       }
 
-      if (!(await user.authenticate(password))) {
-        return res.status(400).json({
-          error: "Email and password do not match",
-        });
-      }
+      bcrypt.compare(password, user.password, function (err, result) {
+        if (err) {
+          return res.status(400).json({
+            error: "Invalid Password",
+          });
+        }
+      });
 
       const token = jwt.sign(
         {
