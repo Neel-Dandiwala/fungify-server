@@ -289,6 +289,6 @@ const _totalSupplyView = async (req, res) => {
     });
 };
 module.exports = {
-    _mint, _transferToken, _unitsOwnedOfAToken, _divisibilityOfAToken, _totalSupplyView
+    _mint, _transferToken, _unitsOwnedOfAToken, _divisibilityOfAToken, _totalSupplyView, _mintTemp
 };
 //# sourceMappingURL=DivisibleNFTController.js.map
