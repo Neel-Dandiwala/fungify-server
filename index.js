@@ -29,6 +29,7 @@ app.use(morgan("common"));
 const authRoute = require("./routes/auth.routes");
 const adminRoute = require("./routes/admin.routes");
 const nftRoutes = require('./routes/nft.routes');
+const tradingRoutes = require('./routes/stockMarket.routes');
 
 app.use("/api/admin", adminRoute);
 
@@ -36,6 +37,8 @@ app.use("/api/admin", adminRoute);
 app.use("/api/auth", authRoute);
 
 app.use("/api/nft", nftRoutes);
+
+app.use("/api/trade", tradingRoutes);
 
 // Serve static assets if in production
 app.use("/", function (req, res) {
