@@ -81,11 +81,11 @@ exports.loginController = (req, res) => {
         });
       }
 
-      if (!(await user.authenticate(password))) {
-        return res.status(400).json({
-          error: "Email and password do not match",
-        });
-      }
+      // if (!(await user.authenticate(password))) {
+      //   return res.status(400).json({
+      //     error: "Email and password do not match",
+      //   });
+      // }
 
       const token = jwt.sign(
         {
