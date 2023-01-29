@@ -93,3 +93,20 @@ exports.getAllApprovedNFTS = async (req, res) => {
     });
   })
 }
+
+//to get all individual User NFTS
+exports.getUserNFtsByWalletAddress = async (req, res) => {
+  const { walletAddress } = req.params;
+  await NftModel.find({ 'user.walletAddress': walletAddress }).exec((err, data) => {
+    if (err) {
+      return res.status(400).json({
+        error: "Error occured",
+      });
+    }
+    return res.status(200).json({
+      message: "NFT data! added successfully",
+      success: true,
+      nft: data,
+    });
+  })
+}

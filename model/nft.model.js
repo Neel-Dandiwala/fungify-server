@@ -22,8 +22,8 @@ const Nftschema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    approve: {
-      value: false,
+    approved: {
+      default: false,
     },
     shares: {
       type: Number,
