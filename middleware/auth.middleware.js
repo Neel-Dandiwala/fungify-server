@@ -4,7 +4,6 @@ const userModel = require("../model/user.model");
 
 exports.verifyuser = async (req, res, next) => {
   const authHeader = req.headers.authtoken;
-
   if (authHeader) {
     const token = authHeader;
 
