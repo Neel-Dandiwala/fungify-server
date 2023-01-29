@@ -31,9 +31,15 @@ let _web3;
 //     return web3;
 // }
 
+exports.web3config = async (con) => {
+    const web3_ = await con.connection.db.collection('config').findOne({_id: 'web3'})
+    _web3 = web3_
+    console.log(_web3)
+}
+
 exports.web3 = () => {
     return new Web3(
-    new Web3.providers.HttpProvider('https://4781-42-106-240-177.ngrok.io'));
+    new Web3.providers.HttpProvider(_web3.web3_link));
 }
 
 // exports.web3 = async () => {
