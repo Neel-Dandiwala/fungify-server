@@ -57,6 +57,7 @@ const main = async () => {
   const authRoute = require("./routes/auth.routes");
   const adminRoute = require("./routes/admin.routes");
   const nftRoutes = require("./routes/nft.routes");
+  const tradingRoutes = require("./routes/stockMarket.routes")
   // const ACoinRoutes = require('./routes/ACoinRoutes');
   app.use(require("./routes/ACoinRoutes"));
   app.use(require("./routes/DivisibleNFTRoutes"));
