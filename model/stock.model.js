@@ -26,7 +26,7 @@ const dynamicBuyOrderModel = (databaseName) => {
 }
 
 const dynamicSellOrderModel = (databaseName) => {
-    const buyTransactionSchema = new mongoose.Schema(
+    const sellTransactionSchema = new mongoose.Schema(
         {
             price: {
                 type: Number,
@@ -46,7 +46,7 @@ const dynamicSellOrderModel = (databaseName) => {
 
     const conn = mongoose.connection.useDb(databaseName);
 
-    return conn.model("sell", dynamicSellOrderModel, "sell");
+    return conn.model("sell", sellTransactionSchema, "sell");
 }
 
 const dynamicConfirmedOrderModel = (databaseName) => {

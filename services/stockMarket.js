@@ -1,5 +1,7 @@
+const { default: mongoose } = require("mongoose");
 const { dynamicBuyOrderModel, dynamicSellOrderModel, dynamicConfirmedOrderModel } = require("../model/stock.model");
-const { web3 } = require('../web3')
+const { web3 } = require("../web3");
+// const { web3 } = require('../web3')
 
 async function transferTokensWithId(_from, _to, _tokenId, _units) {
 
@@ -32,31 +34,94 @@ async function transferTokensWithId(_from, _to, _tokenId, _units) {
 }
 
 async function checkAndExecuteBuyOrderIfAnySellOrderExists(nftId, shares, price, userAddress) {
-    // Check if there is any sell order for the given NFT
-    var findSellOrder = await dynamicSellOrderModel(nftId).findOne({ price: price, quantity: shares, userId: userAddress });
-    console.log(doc);
-    let sellerId = null;
-    if (findSellOrder !== null && findSellOrder !== undefined) {
-        if (findSellOrder.length > 0) {
+    try {
+        // Check if there is any sell order for the given NFT
+        var findSellOrder = await mongoose.connection.useDb(nftId).collection("sell").findOne({ price: price, quantity: shares });
+        console.log(findSellOrder);
+        let sellerId = null;
+        if (findSellOrder) {
             sellerId = findSellOrder.userId;
         }
-    }
 
-    if (sellerId !== null) {
-        // If yes, then execute the buy order
-        var executeOrder = async () => {
-            await dynamicBuyOrderModel(nftId).deleteOne({ price: price, quantity: shares, userId: userAddress });
-            await dynamicSellOrderModel(nftId).deleteOne({ price: price, quantity: shares, userId: userAddress });
-            await dynamicConfirmedOrderModel(nftId).create({ price: price, quantity: shares, userId: userAddress });
-            // Call blockchain code to transfer the shares to the user's wallet
-            await transferTokensWithId(sellerId, userAddress, nftId, shares);
+        console.log("SellerId", sellerId);
+        if (sellerId !== null) {
+            // If yes, then execute the buy order
+            var executeOrder = async () => {
+                await mongoose.connection.useDb(nftId).collection("buy").deleteOne({ price: price, quantity: shares, userId: userAddress });
+                await mongoose.connection.useDb(nftId).collection("sell").deleteOne({ price: price, quantity: shares, userId: sellerId });
+                await dynamicConfirmedOrderModel(nftId).create({ price: price, quantity: shares, buyerId: userAddress, sellerId: sellerId });
+                // Call blockchain code to transfer the shares to the user's wallet
+                // await transferTokensWithId(sellerId, userAddress, nftId, shares);
+            }
+            executeOrder();
+            return {
+                message: "Buy order executed successfully!",
+                success: true
+            };
         }
-        executeOrder();
+
+        // If no, then place the buy order
+        await dynamicBuyOrderModel(nftId).create({ price: price, quantity: shares, userId: userAddress });
+        return {
+            message: "Buy order placed successfully!",
+            success: true
+        };
+    } catch (err) {
+        console.log(err);
+        return {
+            message: "Something went wrong!",
+            success: false
+        };
     }
-
-    // If no, then place the buy order
-
-
 }
 
-module.exports = { checkAndExecuteBuyOrderIfAnySellOrderExists }
+
+
+
+async function checkAndExecuteSellOrderIfAnyBuyOrderExists(nftId, shares, price, userAddress) {
+    try {
+        // Check if there is any sell order for the given NFT
+        var findBuyOrder = await mongoose.connection.useDb(nftId).collection("buy").findOne({ price: price, quantity: shares });
+        console.log(findBuyOrder);
+        let buyerId = null;
+        if (findBuyOrder !== null && findBuyOrder !== undefined) {
+            if (findBuyOrder.length > 0) {
+                buyerId = findBuyOrder.userId;
+            }
+        }
+
+        if (buyerId !== null) {
+            // If yes, then execute the buy order
+            var executeOrder = async () => {
+                await mongoose.connection.useDb(nftId).collection("buy").deleteOne({ price: price, quantity: shares, userId: buyerId });
+                await mongoose.connection.useDb(nftId).collection("sell").deleteOne({ price: price, quantity: shares, userId: userAddress });
+                await dynamicConfirmedOrderModel(nftId).create({ price: price, quantity: shares, buyerId: buyerId, sellerId: userAddress });
+                // Call blockchain code to transfer the shares to the user's wallet
+                // await transferTokensWithId(userAddress, buyerId, nftId, shares);
+            }
+            executeOrder();
+            return {
+                message: "Sell order executed successfully!",
+                success: true
+            };
+        }
+
+        // If no, then place the buy order
+        await dynamicSellOrderModel(nftId).create({ price: price, quantity: shares, userId: userAddress });
+        return {
+            message: "Sell order placed successfully!",
+            success: true
+        };
+    }
+    catch (err) {
+        console.log(err);
+        return {
+            message: "Something went wrong!",
+            success: false
+        }
+    }
+}
+
+
+
+module.exports = { checkAndExecuteBuyOrderIfAnySellOrderExists, checkAndExecuteSellOrderIfAnyBuyOrderExists }
