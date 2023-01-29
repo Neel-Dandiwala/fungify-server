@@ -79,17 +79,11 @@ const _burnACoin = async (req, res) => {
     console.log(_amount);
     let logs;
     const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await (web3()).eth.sendTransaction({ from: process.env.OWNER_ADDRESS, to: _account, gasPrice: '3000000', value: _amount })
-        .then(async function (blockchain_result) {
-        await divisibleNftsContract.methods.burnACoin(_account, _numACoins).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
-            .then(function (burnACoin_result) {
-            console.log(burnACoin_result);
-            logs = {
-                account: burnACoin_result.events.burnACoinEvent.returnValues._account,
-                numACoins: burnACoin_result.events.burnACoinEvent.returnValues._numACoins,
-            };
-            res.status(200).json(logs);
-            return;
+    await divisibleNftsContract.methods.burnACoin(_account, _numACoins).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
+        .then(async function ( burnACoin_result) {
+        await (web3()).eth.sendTransaction({ from: process.env.OWNER_ADDRESS, to: _account, gasPrice: '3000000', value: _amount })
+            .then(function (blockchain_result) {
+            console.log(blockchain_result);
         }).catch((err) => {
             console.log(err);
             logs =
@@ -100,7 +94,13 @@ const _burnACoin = async (req, res) => {
             res.status(400).json(logs);
             return { logs };
         });
+        logs = {
+            account: burnACoin_result.events.burnACoinEvent.returnValues._account,
+            numACoins: burnACoin_result.events.burnACoinEvent.returnValues._numACoins,
+        };
+        res.status(200).json(logs);
         return;
+        
     }).catch((err) => {
         console.log(err);
         logs =
