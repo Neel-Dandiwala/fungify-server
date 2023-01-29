@@ -6,13 +6,12 @@ const helmet = require("helmet");
 const connectDB = require("./configs/mongodb_config");
 const path = require("path");
 const app = express();
-const bodyParser = require('body-parser');
-const connection = require('./connection')
-const { web3 } = require('./web3')
-const Web3 = require('web3');
+const bodyParser = require("body-parser");
+const connection = require("./connection");
+const { web3 } = require("./web3");
+const Web3 = require("web3");
 
 const main = async () => {
-
   // Mongoose Connection
   connectDB();
 
@@ -34,11 +33,10 @@ const main = async () => {
   // Importing Routes
   const authRoute = require("./routes/auth.routes");
   const adminRoute = require("./routes/admin.routes");
-  const nftRoutes = require('./routes/nft.routes');
+  const nftRoutes = require("./routes/nft.routes");
   // const ACoinRoutes = require('./routes/ACoinRoutes');
-  app.use(require('./routes/ACoinRoutes'));
-  app.use(require('./routes/DivisibleNFTRoutes'));
-
+  app.use(require("./routes/ACoinRoutes"));
+  app.use(require("./routes/DivisibleNFTRoutes"));
 
   app.use("/api/admin", adminRoute);
 
@@ -87,8 +85,7 @@ const main = async () => {
   // PORT
   const port = process.env.PORT || 5000;
   app.listen(port, () => console.log(`Server running on port: ${port}`));
-
-}
+};
 
 main().catch((e) => {
   console.log(e);

@@ -1,31 +1,37 @@
-
-const { web3,  DivisibleNftsABI} = require('../web3')
+const { web3, DivisibleNftsABI } = require("../web3");
 
 const _transferACoin = async (req, res) => {
-    const _sender = req.body.sender;
-    const _receiver = req.body.receiver;
-    const _numACoins = req.body.numACoins;
-    let logs;
-    const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await divisibleNftsContract.methods.transferACoin(_sender, _receiver, _numACoins).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
-        .then(function (blockchain_result) {
-        console.log(blockchain_result);
-        logs = {
-            sender: blockchain_result.events.transferACoinEvent.returnValues._from,
-            receiver: blockchain_result.events.transferACoinEvent.returnValues._to,
-            numACoins: blockchain_result.events.transferACoinEvent.returnValues._numACoins,
-        };
-        res.status(200).json(logs);
-        return;
-    }).catch((err) => {
-        console.log(err);
-        logs =
-            {
-                field: "Blockchain Error",
-                message: err,
-            };
-        res.status(400).json(logs);
-        return { logs };
+  const _sender = req.body.sender;
+  const _receiver = req.body.receiver;
+  const _numACoins = req.body.numACoins;
+  let logs;
+  const divisibleNftsContract = new (web3().eth.Contract)(
+    DivisibleNftsABI.abi,
+    process.env.DIVISIBLE_NFTS_ADDRESS,
+    {}
+  );
+  await divisibleNftsContract.methods
+    .transferACoin(_sender, _receiver, _numACoins)
+    .send({ from: process.env.OWNER_ADDRESS, gasPrice: "3000000" })
+    .then(function (blockchain_result) {
+      console.log(blockchain_result);
+      logs = {
+        sender: blockchain_result.events.transferACoinEvent.returnValues._from,
+        receiver: blockchain_result.events.transferACoinEvent.returnValues._to,
+        numACoins:
+          blockchain_result.events.transferACoinEvent.returnValues._numACoins,
+      };
+      res.status(200).json(logs);
+      return;
+    })
+    .catch((err) => {
+      console.log(err);
+      logs = {
+        field: "Blockchain Error",
+        message: err,
+      };
+      res.status(400).json(logs);
+      return { logs };
     });
 };
 
@@ -57,20 +63,19 @@ const _buyACoin = async (req, res) => {
             res.status(400).json(logs);
             return { logs };
         });
-        return;
-    }).catch((err) => {
-        console.log(err);
-        logs =
-            {
-                field: "Blockchain Error",
-                message: err,
-            };
-        res.status(400).json(logs);
-        return { logs };
+      return;
+    })
+    .catch((err) => {
+      console.log(err);
+      logs = {
+        field: "Blockchain Error",
+        message: err,
+      };
+      res.status(400).json(logs);
+      return { logs };
     });
-    return;
+  return;
 };
-
 
 const _burnACoin = async (req, res) => {
     const _account = req.body.account;
@@ -94,76 +99,92 @@ const _burnACoin = async (req, res) => {
             res.status(400).json(logs);
             return { logs };
         });
-        logs = {
-            account: burnACoin_result.events.burnACoinEvent.returnValues._account,
-            numACoins: burnACoin_result.events.burnACoinEvent.returnValues._numACoins,
-        };
-        res.status(200).json(logs);
-        return;
-        
-    }).catch((err) => {
-        console.log(err);
-        logs =
-            {
-                field: "Blockchain Error",
-                message: err,
-            };
-        res.status(400).json(logs);
-        return { logs };
+      return;
+    })
+    .catch((err) => {
+      console.log(err);
+      logs = {
+        field: "Blockchain Error",
+        message: err,
+      };
+      res.status(400).json(logs);
+      return { logs };
     });
-    return;
+  return;
 };
 const _getAcoinTotalSupply = async (req, res) => {
-    let logs;
-    const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await divisibleNftsContract.methods.getAcoinTotalSupply().send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
-        .then(function (blockchain_result) {
-        console.log(blockchain_result);
-        logs = {
-            acoinTotalSupply: blockchain_result.events.getAcoinTotalSupplyEvent.returnValues._acoinTotalSupply,
-            message: blockchain_result.events.getAcoinTotalSupplyEvent.returnValues._message
-        };
-        res.status(200).json(logs);
-        return;
-    }).catch((err) => {
-        console.log(err);
-        logs =
-            {
-                field: "Blockchain Error",
-                message: err,
-            };
-        res.status(400).json(logs);
-        return { logs };
+  let logs;
+  const divisibleNftsContract = new (web3().eth.Contract)(
+    DivisibleNftsABI.abi,
+    process.env.DIVISIBLE_NFTS_ADDRESS,
+    {}
+  );
+  await divisibleNftsContract.methods
+    .getAcoinTotalSupply()
+    .send({ from: process.env.OWNER_ADDRESS, gasPrice: "3000000" })
+    .then(function (blockchain_result) {
+      console.log(blockchain_result);
+      logs = {
+        acoinTotalSupply:
+          blockchain_result.events.getAcoinTotalSupplyEvent.returnValues
+            ._acoinTotalSupply,
+        message:
+          blockchain_result.events.getAcoinTotalSupplyEvent.returnValues
+            ._message,
+      };
+      res.status(200).json(logs);
+      return;
+    })
+    .catch((err) => {
+      console.log(err);
+      logs = {
+        field: "Blockchain Error",
+        message: err,
+      };
+      res.status(400).json(logs);
+      return { logs };
     });
 };
 
-
 const _acoinBalanceOf = async (req, res) => {
-    const _account = req.body.account;
-    let logs;
-    const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await divisibleNftsContract.methods.acoinBalanceOf(_account).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
-        .then(function (blockchain_result) {
-        console.log(blockchain_result);
-        logs = {
-            acoinBalance: blockchain_result.events.acoinBalanceOfEvent.returnValues._acoinBalance,
-            message: blockchain_result.events.acoinBalanceOfEvent.returnValues._message
-        };
-        res.status(200).json(logs);
-        return;
-    }).catch((err) => {
-        console.log(err);
-        logs =
-            {
-                field: "Blockchain Error",
-                message: err,
-            };
-        res.status(400).json(logs);
-        return { logs };
+  const _account = req.body.account;
+  let logs;
+  const divisibleNftsContract = new (web3().eth.Contract)(
+    DivisibleNftsABI.abi,
+    process.env.DIVISIBLE_NFTS_ADDRESS,
+    {}
+  );
+  await divisibleNftsContract.methods
+    .acoinBalanceOf(_account)
+    .send({ from: process.env.OWNER_ADDRESS, gasPrice: "3000000" })
+    .then(function (blockchain_result) {
+      console.log(blockchain_result);
+      logs = {
+        acoinBalance:
+          blockchain_result.events.acoinBalanceOfEvent.returnValues
+            ._acoinBalance,
+        message:
+          blockchain_result.events.acoinBalanceOfEvent.returnValues._message,
+      };
+      res.status(200).json(logs);
+      return;
+    })
+    .catch((err) => {
+      console.log(err);
+      logs = {
+        field: "Blockchain Error",
+        message: err,
+      };
+      res.status(400).json(logs);
+      return { logs };
     });
 };
 
 module.exports = {
-    _buyACoin, _burnACoin, _transferACoin, _getAcoinTotalSupply, _acoinBalanceOf
+  _buyACoin,
+  _burnACoin,
+  _transferACoin,
+  _getAcoinTotalSupply,
+  _acoinBalanceOf,
 };
 //# sourceMappingURL=ACoinController.js.map
