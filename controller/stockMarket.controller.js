@@ -17,7 +17,7 @@ async function placeBuyOrderForNFTShare(req, res) {
         quantity: shares, price, userAddress
     });
 
-    var orderConfirmed = await checkAndExecuteIfAnySellOrderExists(nftId, shares, price, userAddress);
+    var orderConfirmed = await stockMarketService.checkAndExecuteBuyOrderIfAnySellOrderExists(nftId, shares, price, userAddress);
 
     // TODO: Deduct the user balance
     // TODO: Add the shares to the user's wallet
