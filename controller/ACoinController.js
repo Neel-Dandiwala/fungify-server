@@ -32,11 +32,11 @@ const _transferACoin = async (req, res) => {
 const _buyACoin = async (req, res) => {
     const _account = req.body.account;
     const _numACoins = req.body.numACoins;
-    const _amount = (web3_1.web3.getWeb3()).utils.toWei(_numACoins, "ether");
+    const _amount = (web3()).utils.toWei(_numACoins, "ether");
     console.log(_amount);
     let logs;
     const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await (web3_1.web3.getWeb3()).eth.sendTransaction({ from: _account, to: process.env.OWNER_ADDRESS, gasPrice: '3000000', value: _amount })
+    await (web3()).eth.sendTransaction({ from: _account, to: process.env.OWNER_ADDRESS, gasPrice: '3000000', value: _amount })
         .then(async function (blockchain_result) {
         await divisibleNftsContract.methods.buyACoin(_account, _numACoins).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
             .then(function (buyACoin_result) {
@@ -75,11 +75,11 @@ const _buyACoin = async (req, res) => {
 const _burnACoin = async (req, res) => {
     const _account = req.body.account;
     const _numACoins = req.body.numACoins;
-    const _amount = (web3_1.web3.getWeb3()).utils.toWei(_numACoins, "ether");
+    const _amount = (web3()).utils.toWei(_numACoins, "ether");
     console.log(_amount);
     let logs;
     const divisibleNftsContract = new (web3()).eth.Contract(DivisibleNftsABI.abi, process.env.DIVISIBLE_NFTS_ADDRESS, {});
-    await (web3_1.web3.getWeb3()).eth.sendTransaction({ from: process.env.OWNER_ADDRESS, to: _account, gasPrice: '3000000', value: _amount })
+    await (web3()).eth.sendTransaction({ from: process.env.OWNER_ADDRESS, to: _account, gasPrice: '3000000', value: _amount })
         .then(async function (blockchain_result) {
         await divisibleNftsContract.methods.burnACoin(_account, _numACoins).send({ from: process.env.OWNER_ADDRESS, gasPrice: '3000000' })
             .then(function (burnACoin_result) {
