@@ -194,12 +194,14 @@ const _transferToken = async (req, res) => {
         .then(function (blockchain_result) {
         console.log(blockchain_result);
         logs = {
-            from: blockchain_result.events.transferEvent.returnValues._from,
-            to: blockchain_result.events.transferEvent.returnValues._to,
-            tokenId: blockchain_result.events.transferEvent.returnValues._tokenId,
-            units: blockchain_result.events.transferEvent.returnValues._units,
-            message: blockchain_result.events.transferEvent.returnValues._message,
+            blockchain_result
+            // from: blockchain_result.events.transferEvent.returnValues._from,
+            // to: blockchain_result.events.transferEvent.returnValues._to,
+            // tokenId: blockchain_result.events.transferEvent.returnValues._tokenId,
+            // units: blockchain_result.events.transferEvent.returnValues._units,
+            // message: blockchain_result.events.transferEvent.returnValues._message,
         };
+
         res.status(200).json(logs);
         return;
     }).catch((err) => {
