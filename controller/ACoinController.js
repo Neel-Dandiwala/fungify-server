@@ -145,6 +145,53 @@ const _buyACoinEvent = async (req, res) => {
     });
 };
 
+const _buyACoinEventTemp = async (req, res) => {
+  const _caller = req.body.caller;
+  const eventCaller = await web3().utils.sha3(_caller)
+  const abi = DivisibleNftsABI.abi
+  const eventTopic = await web3().utils.sha3("buyACoinEvent(address, uint, address payable, string)")
+  // console.log(typeof DivisibleNftsABI.abi)
+  const response = await Moralis.EvmApi.events.getContractEvents({
+    address: process.env.DIVISIBLE_NFTS_ADDRESS,
+    abi: {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "address",
+          "name": "_account",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_numACoins",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "address payable",
+          "name": "_caller",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "_message",
+          "type": "string"
+        }
+      ],
+      "name": "buyACoinEvent",
+      "type": "event"
+    },
+    chain: 80001,
+    topic: "buyACoinEvent(address, uint, address payable, string)",
+  })
+  // console.log(response);
+  res.status(200).json(response);
+  return
+}
+
 const _burnACoin = async (req, res) => {
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
@@ -159,34 +206,35 @@ const _burnACoin = async (req, res) => {
       process.env.DIVISIBLE_NFTS_ADDRESS,
       {}
     );
-    var encodedData = divisibleNftsContract.methods
-      .burnACoin(_account, _numACoins, _caller)
-      .encodeABI();
+    var encodedData = divisibleNftsContract.methods.burnACoin(_account, _numACoins, _caller).encodeABI();
       
     var encodedValue = web3().utils.toHex(
       web3().utils.toWei(_numACoins, "gwei")
     );
+
+    const gasPrice = await web3().eth.getGasPrice();
+    const gasEstimate = await divisibleNftsContract.methods.burnACoin(_account, _numACoins, _caller).estimateGas({ });
+  
     const transactionParam = {
       to: process.env.DIVISIBLE_NFTS_ADDRESS,
-      // gas: '0x76c0', // 30400
-      // gasPrice: '0x9184e72a000', // 10000000000000
+      gas: '210000',
+      gasPrice: gasPrice,
       value: encodedValue,
       data: encodedData,
     };
-
-    await web3()
-      .eth.accounts.signTransaction(
+    await web3().eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
       )
-      .then((signed) => {
-        web3()
-          .eth.sendSignedTransaction(signed.rawTransaction)
+      .then(async (signed) => {
+        await web3().eth.sendSignedTransaction(signed.rawTransaction)
           .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
+            // res.status(200).json(logs);
+            // return { logs };
           });
       })
       .catch((err) => {
@@ -199,6 +247,9 @@ const _burnACoin = async (req, res) => {
         res.status(400).json(logs);
         return { logs };
       });
+    
+    var block = await (web3()).eth.getBlock("latest");
+    var blockNumber = await web3().eth.getBlockNumber()
 
     await divisibleNftsContract
       .getPastEvents("burnACoinEvent", {
@@ -428,11 +479,7 @@ const _acoinBalanceOfTemp = async (req, res) => {
 
 const _acoinBalanceOf = async (req, res) => {
   const _account = req.body.account;
-  Moralis.start({
-    apiKey: process.env.MORALIS_KEY
-  }).then(async()=>{
-  
-    const response = await Moralis.EvmApi.utils.runContractFunction({
+  const response = await Moralis.EvmApi.utils.runContractFunction({
     address:process.env.DIVISIBLE_NFTS_ADDRESS,
     functionName: "acoinBalanceOf",
     abi: DivisibleNftsABI.abi,
@@ -440,12 +487,11 @@ const _acoinBalanceOf = async (req, res) => {
     params: {
         acoinOwner: _account
     }
-})
-console.log(response);
-res.status(200).json(response);
-return
+  })
+  console.log(response);
+  res.status(200).json(response);
+  return
 
-})
 }
 
 module.exports = {

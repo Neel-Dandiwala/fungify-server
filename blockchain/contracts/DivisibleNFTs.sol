@@ -113,10 +113,10 @@ contract DivisibleNFTs {
     }
 
 	/// @dev Withdrawing ETH from ACoin, transferring ETH to user from owner
-    function burnACoin(address account, uint numACoins, address payable _caller)
+    function burnACoin(address payable account, uint numACoins, address payable _caller)
 		payable
         public 
-        onlyOwner
+        
     {
 		require(acoinBalances[account] >= numACoins);
         acoinBalances[account] = acoinBalances[account].sub(numACoins);

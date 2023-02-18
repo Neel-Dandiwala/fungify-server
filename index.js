@@ -10,6 +10,7 @@ const bodyParser = require("body-parser");
 const connection = require("./connection");
 const { web3, web3config } = require("./web3");
 const Web3 = require("web3");
+const Moralis = require("moralis").default;
 
 const main = async () => {
   // Mongoose Connection
@@ -22,6 +23,9 @@ const main = async () => {
     web3config(con).then(async() => {
       try {
         console.log(await (web3()).eth.getBlockNumber()); 
+        Moralis.start({
+          apiKey: process.env.MORALIS_KEY
+        }).then(async(result)=>{console.log("Web3 Connected")})
       } catch(e) {
         console.log(e)
       }
