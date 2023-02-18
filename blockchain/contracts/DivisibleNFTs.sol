@@ -91,8 +91,8 @@ contract DivisibleNFTs {
     }
 
     /// @dev The ACoin balance of that address
-    function acoinBalanceOf(address acoinOwner, address payable _caller) public returns (uint256) {
-		emit acoinBalanceOfEvent( acoinBalances[acoinOwner], _caller, "acoinBalanceOf");
+    function acoinBalanceOf(address acoinOwner) public view returns (uint256) {
+		// emit acoinBalanceOfEvent( acoinBalances[acoinOwner], _caller, "acoinBalanceOf");
         return acoinBalances[acoinOwner];
     }
 

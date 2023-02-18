@@ -25,8 +25,7 @@ const _mint = async (req, res) => {
       data: encodedData,
     };
 
-    await web3
-      .getWeb3()
+    await web3()
       .eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
@@ -34,14 +33,14 @@ const _mint = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result: any, events: any) {
+          .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
           });
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log(err);
         logs = {
           field: "Blockchain Error",
@@ -57,7 +56,7 @@ const _mint = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result: any) {
+      .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -111,8 +110,7 @@ const _transferToken = async (req, res) => {
       data: encodedData,
     };
 
-    await web3
-      .getWeb3()
+    await web3()
       .eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
@@ -120,14 +118,14 @@ const _transferToken = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result: any, events: any) {
+          .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
           });
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log(err);
         logs = {
           field: "Blockchain Error",
@@ -143,7 +141,7 @@ const _transferToken = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result: any) {
+      .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -195,8 +193,7 @@ const _unitsOwnedOfAToken = async (req, res) => {
       data: encodedData,
     };
 
-    await web3
-      .getWeb3()
+    await web3()
       .eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
@@ -204,14 +201,14 @@ const _unitsOwnedOfAToken = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result: any, events: any) {
+          .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
           });
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log(err);
         logs = {
           field: "Blockchain Error",
@@ -227,7 +224,7 @@ const _unitsOwnedOfAToken = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result: any) {
+      .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -278,8 +275,7 @@ const _divisibilityOfAToken = async (req, res) => {
       data: encodedData,
     };
 
-    await web3
-      .getWeb3()
+    await web3()
       .eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
@@ -287,14 +283,14 @@ const _divisibilityOfAToken = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result: any, events: any) {
+          .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
           });
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log(err);
         logs = {
           field: "Blockchain Error",
@@ -310,7 +306,7 @@ const _divisibilityOfAToken = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result: any) {
+      .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -360,8 +356,7 @@ const _totalSupplyView = async (req, res) => {
       data: encodedData,
     };
 
-    await web3
-      .getWeb3()
+    await web3()
       .eth.accounts.signTransaction(
         transactionParam,
         process.env.OWNER_PRIVATE_KEY
@@ -369,14 +364,14 @@ const _totalSupplyView = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result: any, events: any) {
+          .then(function (blockchain_result, events) {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
           });
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log(err);
         logs = {
           field: "Blockchain Error",
@@ -392,7 +387,7 @@ const _totalSupplyView = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result: any) {
+      .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -426,6 +421,6 @@ module.exports = {
   _unitsOwnedOfAToken,
   _divisibilityOfAToken,
   _totalSupplyView,
-  _mintTemp,
+  
 };
 //# sourceMappingURL=DivisibleNFTController.js.map

@@ -29,6 +29,7 @@ exports.registerController = (req, res) => {
       const user = new User({
         name,
         email,
+        hashed_password,
         walletAddress,
         balance: parseInt(balance) / 1000000000000000000,
         password: hashed_password,
