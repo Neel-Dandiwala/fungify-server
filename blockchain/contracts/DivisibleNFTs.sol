@@ -129,7 +129,6 @@ contract DivisibleNFTs {
 	/// @dev Transferring ACoin from one user account to another
     function transferACoin(address sender, address receiver, uint256 numACoins, address payable _caller)
         public
-        onlyOwner
         returns (bool)
     {
         require(numACoins <= acoinBalances[sender]);

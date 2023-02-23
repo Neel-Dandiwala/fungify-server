@@ -17,34 +17,43 @@ const _transferACoin = async (req, res) => {
     var encodedData = divisibleNftsContract.methods
       .transferACoin(_sender, _receiver, _numACoins, _caller)
       .encodeABI();
-    const transactionParam = {
-      to: process.env.DIVISIBLE_NFTS_ADDRESS,
-      // gas: '0x76c0', // 30400
-      // gasPrice: '0x9184e72a000', // 10000000000000
-      // value: encodedValue,
-      data: encodedData,
-    };
-
-    res.status(200).json(transactionParam);
-    return;
-  } catch (err) {
-    console.log(err);
-    logs = {
-      field: "Blockchain Error",
-      message: err,
-    };
-    res.status(400).json(logs);
-    return { logs };
-  }
-};
-
-const _transferACoinEvent = async (req, res) => {
-  const _caller = req.body.caller;
-  const divisibleNftsContract = new (web3()).eth.Contract(
-    DivisibleNftsABI.abi,
-    process.env.DIVISIBLE_NFTS_ADDRESS,
-    {}
-  );
+      const gasPrice = await web3().eth.getGasPrice();
+      const gasEstimate = await divisibleNftsContract.methods.transferACoin(_sender, _receiver, _numACoins, _caller).estimateGas({ });
+        console.log(gasPrice, gasEstimate)
+      const transactionParam = {
+        to: process.env.DIVISIBLE_NFTS_ADDRESS,
+        from: process.env.OWNER_ADDRESS,
+        gas: '300000',
+        gasPrice: gasPrice,
+        // value: web3().utils.toWei(_numACoins, "szabo"),
+        data: encodedData,
+      };
+      await web3().eth.accounts.signTransaction(
+          transactionParam,
+          process.env.OWNER_PRIVATE_KEY
+        )
+        .then(async (signed) => {
+          await web3().eth.sendSignedTransaction(signed.rawTransaction)
+            .then(function (blockchain_result, events) {
+              console.log(blockchain_result);
+              logs = {
+                blockchain_result,
+              };
+              // res.status(200).json(logs);
+              // return { logs };
+            });
+        })
+        .catch((err) => {
+          logs = {
+            field: "Blockchain Error",
+            message: err,
+          };
+  
+          res.status(400).json(logs);
+          return { logs };
+        });
+      
+      var block = await (web3()).eth.getBlock("latest");
   var blockNumber = await web3().eth.getBlockNumber();
   await divisibleNftsContract
     .getPastEvents("transferACoinEvent", {
@@ -68,6 +77,15 @@ const _transferACoinEvent = async (req, res) => {
       res.status(400).json("No event emitted");
       return;
     });
+} catch (err) {
+    console.log(err);
+    logs = {
+      field: "Other Error",
+      message: err,
+    };
+    res.status(400).json(logs);
+    return { logs };
+  }
 };
 
 const _buyACoin = async (req, res) => {
