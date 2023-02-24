@@ -1,5 +1,7 @@
 const { web3, DivisibleNftsABI } = require("../web3");
 const Moralis = require("moralis").default;
+const axios = require("axios");
+
 
 const _transferACoin = async (req, res) => {
   const _sender = req.body.sender;
@@ -513,12 +515,38 @@ const _acoinBalanceOf = async (req, res) => {
 
 }
 
+const _exchangeINRtoAcoin = async (req,res) => {
+  const _acoins = req.body.numACoins;
+  var config = {
+    method: 'get',
+  maxBodyLength: Infinity,
+    url: 'https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,INR',
+    headers: { }
+  };
+  
+  axios(config)
+  .then(function (response) {
+    console.log(JSON.stringify(response.data));
+    var ethINR = response.data["INR"];
+    var rate = ethINR/1000000
+    var paymentINR = rate * _acoins;
+
+    res.status(200).json(paymentINR)
+
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+
+};
+
 module.exports = {
   _buyACoin,
   _burnACoin,
   _transferACoin,
   _getAcoinTotalSupply,
   _acoinBalanceOf,
-  _buyACoinEvent
+  _buyACoinEvent,
+  _exchangeINRtoAcoin
 };
 // # sourceMappingURL=ACoinController.js.map
