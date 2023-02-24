@@ -161,6 +161,15 @@ contract DivisibleNFTs {
 	    return divisibility[_tokenId];
 	}
 
+    function divisibilityOfTokens(string[] memory _tokenIds) public view returns (uint[] memory _divisiblities) {
+        uint[] memory divisiblities = new uint[](_tokenIds.length);
+        for(uint i = 0; i < _tokenIds.length; i++) {
+            divisiblities[i] = divisibility[_tokenIds[i]];
+        }
+
+        return divisiblities;
+    }
+
 	/// @dev The amount of a totalSupply
     // Earlier totalSupplyView()
 	function totalSupplyView() public view returns (uint _totalSupply)

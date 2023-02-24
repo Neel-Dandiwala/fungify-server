@@ -308,7 +308,23 @@ const _unitsOwnedOfAToken = async (req, res) => {
   return
 };
 
+const _divisibilityOfTokens = async (req, res) => {
+  const _tokenIds = req.body.tokenIds;
+  let logs;
 
+  const response = await Moralis.EvmApi.utils.runContractFunction({
+    address:process.env.DIVISIBLE_NFTS_ADDRESS,
+    functionName: "divisibilityOfTokens",
+    abi: DivisibleNftsABI.abi,
+    chain: 80001,
+    params: {
+      _tokenIds: _tokenIds
+    }
+  })
+  console.log(response);
+  res.status(200).json(response);
+  return
+};
 
 
 module.exports = {
@@ -317,7 +333,8 @@ module.exports = {
   _unitsOwnedOfAToken,
   _divisibilityOfAToken,
   _totalSupplyView,
-  _unitsOwnedOfAToken
+  _unitsOwnedOfAToken,
+  _divisibilityOfTokens
   
 };
 //# sourceMappingURL=DivisibleNFTController.js.map
