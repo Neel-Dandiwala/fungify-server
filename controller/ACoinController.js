@@ -194,6 +194,7 @@ const _buyACoinINR = async (req, res) => {
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
   const _caller = req.body.caller;
+  const email = req.body.email;
   let logs;
 
   try {
@@ -258,7 +259,22 @@ const _buyACoinINR = async (req, res) => {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result) {
+      .then(async function (blockchain_result) {
+        const transactionData = {
+          to: process.env.DIVISIBLE_NFTS_ADDRESS,
+          value: web3().utils.toWei(_numACoins, "szabo"),
+          type: "INR Transfer"
+        }
+        let result =
+          await User.findOneAndUpdate({
+            email: email
+          }, {
+            $push: {
+              transaction: {
+                transactionData
+              }
+            }
+          })
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
             .toString()
@@ -266,8 +282,10 @@ const _buyACoinINR = async (req, res) => {
           var boolCheck =
             resultCaller.toString().trim().toLowerCase() ===
             _caller.toString().trim().toLowerCase();
+
           if (boolCheck) {
             console.log(blockchain_result[i]);
+
             res.status(200).json(blockchain_result[i]);
             return;
           }
@@ -746,7 +764,7 @@ const _exchangeINRtoAcoin = async (req, res) => {
 const _fetchUserTransactions = async (req, res) => {
   console.log(req.body);
 
-   User.findOne({
+  User.findOne({
     email: req.body.email,
   }).exec((err, data) => {
     if (err) {
