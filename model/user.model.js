@@ -28,7 +28,7 @@ const userSchema = new mongoose.Schema(
     wallet: {
       type: Number,
     },
-    transcation: {
+    transaction: {
       type: Array,
     },
     role: {
