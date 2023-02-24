@@ -93,7 +93,7 @@ const _transferACoin = async (req, res) => {
 const _buyACoin = async (req, res) => {
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   // const _amount = (web3()).utils.toWei(_numACoins, "ether");
 
   let logs;
@@ -133,8 +133,8 @@ const _buyACoin = async (req, res) => {
 const _buyACoinEvent = async (req, res) => {
   console.log(req.body.body)
   console.log(JSON.parse(req.body.body))
-  const _caller = (JSON.parse(req.body.body)).caller;
-  console.log(_caller);
+  const _account = (JSON.parse(req.body.body)).caller;
+  console.log(_account);
   const divisibleNftsContract = new (web3()).eth.Contract(
     DivisibleNftsABI.abi,
     process.env.DIVISIBLE_NFTS_ADDRESS,
@@ -148,14 +148,14 @@ const _buyACoinEvent = async (req, res) => {
     })
     .then(function (blockchain_result) {
       for (let i = 0; i < blockchain_result.length; i++) {
-        let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+        let resultAccount = blockchain_result[i]["returnValues"]["_account"]
           .toString()
           .replace(/\s/g, "");
         var boolCheck =
-          resultCaller.toString().trim().toLowerCase() === _caller.toString().trim().toLowerCase();
+          resultAccount.toString().trim().toLowerCase() === _account.toString().trim().toLowerCase();
         if (boolCheck) {
-          console.log(blockchain_result[i]);
-          console.log(blockchain_result[i]["returnValues"]['_account'])
+          // console.log(blockchain_result[i]);
+          // console.log(blockchain_result[i]["returnValues"]['_account'])
           res.status(200).json(blockchain_result[i]);
           return;
         }
@@ -168,7 +168,7 @@ const _buyACoinEvent = async (req, res) => {
 const _buyACoinINR = async (req, res) => {
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   let logs;
 
   try {
@@ -229,12 +229,12 @@ const _buyACoinINR = async (req, res) => {
       })
       .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+          let resultAccount = blockchain_result[i]["returnValues"]["_account"]
             .toString()
             .replace(/\s/g, "");
           var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
+            resultAccount.toString().trim().toLowerCase() ===
+            _account.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
             res.status(200).json(blockchain_result[i]);
@@ -259,7 +259,7 @@ const _burnACoin = async (req, res) => {
   console.log(res)
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   // const _amount = web3().utils.toWei(_numACoins, "ether");
 
   let logs;
@@ -322,12 +322,12 @@ const _burnACoin = async (req, res) => {
       })
       .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+          let resultAccount = blockchain_result[i]["returnValues"]["_account"]
             .toString()
             .replace(/\s/g, "");
           var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
+            resultAccount.toString().trim().toLowerCase() ===
+            _account.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
             res.status(200).json(blockchain_result[i]);
@@ -352,7 +352,7 @@ const _burnACoinINR = async (req, res) => {
   console.log(res)
   const _account = req.body.account;
   const _numACoins = req.body.numACoins;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   // const _amount = web3().utils.toWei(_numACoins, "ether");
 
   let logs;
@@ -415,12 +415,12 @@ const _burnACoinINR = async (req, res) => {
       })
       .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+          let resultAccount = blockchain_result[i]["returnValues"]["_account"]
             .toString()
             .replace(/\s/g, "");
           var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
+            resultAccount.toString().trim().toLowerCase() ===
+            _account.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
             res.status(200).json(blockchain_result[i]);

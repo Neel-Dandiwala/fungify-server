@@ -6,7 +6,7 @@ const _mint = async (req, res) => {
   const _owner = req.body.owner;
   const _tokenId = req.body.tokenId;
   const _noOfShares = req.body.noOfShares;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   let logs;
 
   try {
@@ -60,12 +60,12 @@ const _mint = async (req, res) => {
       })
       .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+          let resultOwner = blockchain_result[i]["returnValues"]["_owner"]
             .toString()
             .replace(/\s/g, "");
           var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
+            resultOwner.toString().trim().toLowerCase() ===
+            _owner.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
             res.status(200).json(blockchain_result[i]);
@@ -91,7 +91,7 @@ const _transferToken = async (req, res) => {
   const _to = req.body.to;
   const _tokenId = req.body.tokenId;
   const _units = req.body.units;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   let logs;
 
   try {
@@ -145,12 +145,12 @@ const _transferToken = async (req, res) => {
       })
       .then(function (blockchain_result) {
         for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+          let resultFrom = blockchain_result[i]["returnValues"]["_from"]
             .toString()
             .replace(/\s/g, "");
           var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
+            resultFrom.toString().trim().toLowerCase() ===
+            _from.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
             res.status(200).json(blockchain_result[i]);
