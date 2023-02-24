@@ -165,51 +165,94 @@ const _buyACoinEvent = async (req, res) => {
     });
 };
 
-const _buyACoinEventTemp = async (req, res) => {
+const _buyACoinINR = async (req, res) => {
+  const _account = req.body.account;
+  const _numACoins = req.body.numACoins;
   const _caller = req.body.caller;
-  const eventCaller = await web3().utils.sha3(_caller)
-  const abi = DivisibleNftsABI.abi
-  const eventTopic = await web3().utils.sha3("buyACoinEvent(address, uint, address payable, string)")
-  // console.log(typeof DivisibleNftsABI.abi)
-  const response = await Moralis.EvmApi.events.getContractEvents({
-    address: process.env.DIVISIBLE_NFTS_ADDRESS,
-    abi: {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "_account",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "_numACoins",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "address payable",
-          "name": "_caller",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "string",
-          "name": "_message",
-          "type": "string"
+  let logs;
+
+  try {
+    const divisibleNftsContract = new (web3()).eth.Contract(
+      DivisibleNftsABI.abi,
+      process.env.DIVISIBLE_NFTS_ADDRESS,
+      {}
+    );
+    var encodedData = divisibleNftsContract.methods.buyACoinINR(_account, _numACoins, _caller).encodeABI();
+      
+    // var encodedValue = web3().utils.toHex(
+    //   web3().utils.toWei(_numACoins, "szabo")
+    // );
+
+    const gasPrice = await web3().eth.getGasPrice();
+    const gasEstimate = await divisibleNftsContract.methods.buyACoinINR(_account, _numACoins, _caller).estimateGas({ });
+      console.log(gasPrice, gasEstimate)
+    const transactionParam = {
+      to: process.env.DIVISIBLE_NFTS_ADDRESS,
+      gas: '300000',
+      gasPrice: gasPrice,
+      // value: web3().utils.toWei(_numACoins, "szabo"),
+      data: encodedData,
+    };
+    await web3().eth.accounts.signTransaction(
+        transactionParam,
+        process.env.OWNER_PRIVATE_KEY
+      )
+      .then(async (signed) => {
+        await web3().eth.sendSignedTransaction(signed.rawTransaction)
+          .then(function (blockchain_result, events) {
+            console.log(blockchain_result);
+            logs = {
+              blockchain_result,
+            };
+            // res.status(200).json(logs);
+            // return { logs };
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        logs = {
+          field: "Blockchain Error",
+          message: err,
+        };
+
+        res.status(400).json(logs);
+        return { logs };
+      });
+    
+    var block = await (web3()).eth.getBlock("latest");
+    var blockNumber = await web3().eth.getBlockNumber()
+
+    await divisibleNftsContract
+      .getPastEvents("buyACoinINREvent", {
+        fromBlock: blockNumber - 5,
+        toBlock: "latest",
+      })
+      .then(function (blockchain_result) {
+        for (let i = 0; i < blockchain_result.length; i++) {
+          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+            .toString()
+            .replace(/\s/g, "");
+          var boolCheck =
+            resultCaller.toString().trim().toLowerCase() ===
+            _caller.toString().trim().toLowerCase();
+          if (boolCheck) {
+            console.log(blockchain_result[i]);
+            res.status(200).json(blockchain_result[i]);
+            return;
+          }
         }
-      ],
-      "name": "buyACoinEvent",
-      "type": "event"
-    },
-    chain: 80001,
-    topic: "buyACoinEvent(address, uint, address payable, string)",
-  })
-  // console.log(response);
-  res.status(200).json(response);
-  return
+        res.status(400).json("No event emitted");
+        return;
+      });
+  } catch (err) {
+    console.log(err);
+    logs = {
+      field: "Blockchain Unknown Error",
+      message: err,
+    };
+    res.status(400).json(logs);
+    return { logs };
+  }
 }
 
 const _burnACoin = async (req, res) => {
@@ -274,6 +317,99 @@ const _burnACoin = async (req, res) => {
 
     await divisibleNftsContract
       .getPastEvents("burnACoinEvent", {
+        fromBlock: blockNumber - 5,
+        toBlock: "latest",
+      })
+      .then(function (blockchain_result) {
+        for (let i = 0; i < blockchain_result.length; i++) {
+          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+            .toString()
+            .replace(/\s/g, "");
+          var boolCheck =
+            resultCaller.toString().trim().toLowerCase() ===
+            _caller.toString().trim().toLowerCase();
+          if (boolCheck) {
+            console.log(blockchain_result[i]);
+            res.status(200).json(blockchain_result[i]);
+            return;
+          }
+        }
+        res.status(400).json("No event emitted");
+        return;
+      });
+  } catch (err) {
+    console.log(err);
+    logs = {
+      field: "Blockchain Unknown Error",
+      message: err,
+    };
+    res.status(400).json(logs);
+    return { logs };
+  }
+};
+
+const _burnACoinINR = async (req, res) => {
+  console.log(res)
+  const _account = req.body.account;
+  const _numACoins = req.body.numACoins;
+  const _caller = req.body.caller;
+  // const _amount = web3().utils.toWei(_numACoins, "ether");
+
+  let logs;
+
+  try {
+    const divisibleNftsContract = new (web3()).eth.Contract(
+      DivisibleNftsABI.abi,
+      process.env.DIVISIBLE_NFTS_ADDRESS,
+      {}
+    );
+    var encodedData = divisibleNftsContract.methods.burnACoinINR(_account, _numACoins, _caller).encodeABI();
+      
+    // var encodedValue = web3().utils.toHex(
+    //   web3().utils.toWei(_numACoins, "szabo")
+    // );
+
+    const gasPrice = await web3().eth.getGasPrice();
+    const gasEstimate = await divisibleNftsContract.methods.burnACoinINR(_account, _numACoins, _caller).estimateGas({ });
+      console.log(gasPrice, gasEstimate)
+    const transactionParam = {
+      to: process.env.DIVISIBLE_NFTS_ADDRESS,
+      gas: '300000',
+      gasPrice: gasPrice,
+      // value: web3().utils.toWei(_numACoins, "szabo"),
+      data: encodedData,
+    };
+    await web3().eth.accounts.signTransaction(
+        transactionParam,
+        process.env.OWNER_PRIVATE_KEY
+      )
+      .then(async (signed) => {
+        await web3().eth.sendSignedTransaction(signed.rawTransaction)
+          .then(function (blockchain_result, events) {
+            console.log(blockchain_result);
+            logs = {
+              blockchain_result,
+            };
+            // res.status(200).json(logs);
+            // return { logs };
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        logs = {
+          field: "Blockchain Error",
+          message: err,
+        };
+
+        res.status(400).json(logs);
+        return { logs };
+      });
+    
+    var block = await (web3()).eth.getBlock("latest");
+    var blockNumber = await web3().eth.getBlockNumber()
+
+    await divisibleNftsContract
+      .getPastEvents("burnACoinINREvent", {
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
@@ -542,7 +678,9 @@ const _exchangeINRtoAcoin = async (req,res) => {
 
 module.exports = {
   _buyACoin,
+  _buyACoinINR,
   _burnACoin,
+  _burnACoinINR,
   _transferACoin,
   _getAcoinTotalSupply,
   _acoinBalanceOf,

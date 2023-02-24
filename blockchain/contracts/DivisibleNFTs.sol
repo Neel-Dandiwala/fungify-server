@@ -25,7 +25,11 @@ contract DivisibleNFTs {
 
 	event buyACoinEvent(address _account, uint _numACoins, address payable _caller, string _message);
 
+	event buyACoinINREvent(address _account, uint _numACoins, address payable _caller, string _message);
+
 	event burnACoinEvent(address _account, uint _numACoins, address payable _caller, string _message);
+	
+    event burnACoinINREvent(address _account, uint _numACoins, address payable _caller, string _message);
 
     event transferACoinEvent(address _from, address _to, uint _numACoins, address payable _caller, string _message);
 
@@ -112,6 +116,18 @@ contract DivisibleNFTs {
         emit buyACoinEvent(account, numACoins, _caller, "buyACoin");
     }
 
+    /// @dev Buying ACoin, transferring INR
+    function buyACoinINR(address account, uint numACoins, address payable _caller)
+		payable
+        public 
+    {
+        acoinBalances[account] = acoinBalances[account].add(numACoins);
+		acoinTotalSupply = acoinTotalSupply.add(numACoins);
+        // payable(owner).transfer(msg.value);
+		// payable(owner).transfer(numACoins);
+        emit buyACoinINREvent(account, numACoins, _caller, "buyACoinINR");
+    }
+
 	/// @dev Withdrawing ETH from ACoin, transferring ETH to user from owner
     function burnACoin(address payable account, uint numACoins, address payable _caller)
 		payable
@@ -124,6 +140,20 @@ contract DivisibleNFTs {
         payable(account).transfer(msg.value);
 		// payable(account).transfer(numACoins);
         emit burnACoinEvent(account, numACoins, _caller, "burnACoin");
+    }
+
+    /// @dev Withdrawing ETH from ACoin, transferring ETH to user from owner
+    function burnACoinINR(address payable account, uint numACoins, address payable _caller)
+		payable
+        public 
+        
+    {
+		require(acoinBalances[account] >= numACoins);
+        acoinBalances[account] = acoinBalances[account].sub(numACoins);
+		acoinTotalSupply = acoinTotalSupply.sub(numACoins);
+        // payable(account).transfer(msg.value);
+		// payable(account).transfer(numACoins);
+        emit burnACoinINREvent(account, numACoins, _caller, "burnACoinINR");
     }
 	
 	/// @dev Transferring ACoin from one user account to another
