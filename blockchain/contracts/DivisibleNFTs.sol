@@ -85,8 +85,8 @@ contract DivisibleNFTs {
     // ------------------------------ View functions ------------------------------
 
     /// @dev The total ACoins in circulation at the moment of invocation of this function
-    function getAcoinTotalSupply(address payable _caller) public returns (uint256) {
-		emit getAcoinTotalSupplyEvent(acoinTotalSupply, _caller, "getAcoinTotalSupply");
+    function getAcoinTotalSupply() public view returns (uint256) {
+		// emit getAcoinTotalSupplyEvent(acoinTotalSupply, _caller, "getAcoinTotalSupply");
         return acoinTotalSupply;
     }
 
@@ -155,26 +155,35 @@ contract DivisibleNFTs {
     // ------------------------------ View functions ------------------------------
 
     /// @dev The divisiblity amount of a token
-	function divisibilityOfAToken(string memory _tokenId, address payable _caller) public returns (uint _divisibility)
+	function divisibilityOfAToken(string memory _tokenId) public view returns (uint _divisibility)
 	{
-		emit divisibilityEvent(divisibility[_tokenId], _caller, "divisibilityOfAToken - The divisiblity amount of a token");
+		// emit divisibilityEvent(divisibility[_tokenId], _caller, "divisibilityOfAToken - The divisiblity amount of a token");
 	    return divisibility[_tokenId];
 	}
 
+    function divisibilityOfTokens(string[] memory _tokenIds) public view returns (uint[] memory _divisiblities) {
+        uint[] memory divisiblities = new uint[](_tokenIds.length);
+        for(uint i = 0; i < _tokenIds.length; i++) {
+            divisiblities[i] = divisibility[_tokenIds[i]];
+        }
+
+        return divisiblities;
+    }
+
 	/// @dev The amount of a totalSupply
     // Earlier totalSupplyView()
-	function totalSupplyView(address payable _caller) public returns (uint _totalSupply)
+	function totalSupplyView() public view returns (uint _totalSupply)
 	{
-		emit totalSupplyEvent(tokenTotalSupply, _caller, "totalSupplyView");
+		// emit totalSupplyEvent(tokenTotalSupply, _caller, "totalSupplyView");
 	    return tokenTotalSupply;
 	}
 
     /// @dev The balance an owner have of a token
-    function unitsOwnedOfAToken(address _owner, string memory _tokenId, address payable _caller)
-        public
+    function unitsOwnedOfAToken(address _owner, string memory _tokenId)
+        public view
         returns (uint256 _balance)
     {
-		emit unitsOwnedOfATokenEvent(ownerToTokenShare[_owner][_tokenId], _caller, "unitsOwnedOfAToken");
+		// emit unitsOwnedOfATokenEvent(ownerToTokenShare[_owner][_tokenId], _caller, "unitsOwnedOfAToken");
         return ownerToTokenShare[_owner][_tokenId];
     }
 
