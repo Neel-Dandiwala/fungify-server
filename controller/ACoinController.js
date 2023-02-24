@@ -27,7 +27,7 @@ const _transferACoin = async (req, res) => {
         from: process.env.OWNER_ADDRESS,
         gas: '300000',
         gasPrice: gasPrice,
-        // value: web3().utils.toWei(_numACoins, "finney"),
+        // value: web3().utils.toWei(_numACoins, "szabo"),
         data: encodedData,
       };
       await web3().eth.accounts.signTransaction(
@@ -107,13 +107,13 @@ const _buyACoin = async (req, res) => {
       .buyACoin(_account, _numACoins, _caller)
       .encodeABI();
     var encodedValue = web3().utils.toHex(
-      web3().utils.toWei(_numACoins, "finney")
+      web3().utils.toWei(_numACoins, "szabo")
     );
     const transactionParam = {
       to: process.env.DIVISIBLE_NFTS_ADDRESS,
       // gas: '0x76c0', // 30400
       // gasPrice: '0x9184e72a000', // 10000000000000
-      value: web3().utils.toWei(_numACoins, "finney"),
+      value: web3().utils.toWei(_numACoins, "szabo"),
       data: encodedData,
     };
 
@@ -230,7 +230,7 @@ const _burnACoin = async (req, res) => {
     var encodedData = divisibleNftsContract.methods.burnACoin(_account, _numACoins, _caller).encodeABI();
       
     var encodedValue = web3().utils.toHex(
-      web3().utils.toWei(_numACoins, "finney")
+      web3().utils.toWei(_numACoins, "szabo")
     );
 
     const gasPrice = await web3().eth.getGasPrice();
@@ -240,7 +240,7 @@ const _burnACoin = async (req, res) => {
       to: process.env.DIVISIBLE_NFTS_ADDRESS,
       gas: '300000',
       gasPrice: gasPrice,
-      value: web3().utils.toWei(_numACoins, "finney"),
+      value: web3().utils.toWei(_numACoins, "szabo"),
       data: encodedData,
     };
     await web3().eth.accounts.signTransaction(
