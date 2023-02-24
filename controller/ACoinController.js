@@ -448,31 +448,31 @@ const _burnACoinINR = async (req, res) => {
         return { logs };
       });
 
-    var block = await web3().eth.getBlock("latest");
-    var blockNumber = await web3().eth.getBlockNumber();
+    // var block = await web3().eth.getBlock("latest");
+    // var blockNumber = await web3().eth.getBlockNumber();
 
-    await divisibleNftsContract
-      .getPastEvents("burnACoinINREvent", {
-        fromBlock: blockNumber - 5,
-        toBlock: "latest",
-      })
-      .then(function (blockchain_result) {
-        for (let i = 0; i < blockchain_result.length; i++) {
-          let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
-            .toString()
-            .replace(/\s/g, "");
-          var boolCheck =
-            resultCaller.toString().trim().toLowerCase() ===
-            _caller.toString().trim().toLowerCase();
-          if (boolCheck) {
-            console.log(blockchain_result[i]);
-            res.status(200).json(blockchain_result[i]);
-            return;
-          }
-        }
-        res.status(400).json("No event emitted");
-        return;
-      });
+    // await divisibleNftsContract
+    //   .getPastEvents("burnACoinINREvent", {
+    //     fromBlock: blockNumber - 5,
+    //     toBlock: "latest",
+    //   })
+    //   .then(function (blockchain_result) {
+    //     for (let i = 0; i < blockchain_result.length; i++) {
+    //       let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
+    //         .toString()
+    //         .replace(/\s/g, "");
+    //       var boolCheck =
+    //         resultCaller.toString().trim().toLowerCase() ===
+    //         _caller.toString().trim().toLowerCase();
+    //       if (boolCheck) {
+    //         console.log(blockchain_result[i]);
+    //         res.status(200).json(blockchain_result[i]);
+    //         return;
+    //       }
+    //     }
+    //     res.status(400).json("No event emitted");
+    //     return;
+    //   });
   } catch (err) {
     console.log(err);
     logs = {
@@ -481,7 +481,29 @@ const _burnACoinINR = async (req, res) => {
     };
     res.status(400).json(logs);
     return { logs };
-  }
+  };
+  var config = {
+    method: "get",
+    maxBodyLength: Infinity,
+    url: "https://min-api.cryptocompare.com/data/price?fsym=ETH&tsyms=USD,INR",
+    headers: {},
+  };
+
+  axios(config)
+    .then(function (response) {
+      // console.log(JSON.stringify(response.data));
+      var ethINR = response.data["INR"];
+      var rate = ethINR / 100000;
+      var paymentINR = rate * _numACoins;
+
+      res.status(200).json(paymentINR);
+      return
+    })
+    .catch(function (error) {
+      console.log(error);
+      res.status(400).json(error);
+      return
+    });
 };
 
 const _getAcoinTotalSupply = async (req, res) => {
@@ -712,9 +734,12 @@ const _exchangeINRtoAcoin = async (req, res) => {
       var paymentINR = rate * _acoins;
 
       res.status(200).json(paymentINR);
+      return
     })
     .catch(function (error) {
       console.log(error);
+      res.status(400).json(error);
+      return
     });
 };
 
