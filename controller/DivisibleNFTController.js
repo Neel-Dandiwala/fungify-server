@@ -1,6 +1,8 @@
 const { web3, DivisibleNftsABI } = require("../web3");
 const Moralis = require("moralis").default;
 const Nft = require("../model/nft.model");
+const axios = require("axios");
+
 
 const _mint = async (req, res) => {
   const _owner = req.body.owner;
@@ -60,10 +62,13 @@ const _mint = async (req, res) => {
             _owner.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
+    
             res.status(200).json(blockchain_result[i]);
             return;
           }
         }
+
+
         res.status(400).json("No event emitted");
         return;
       });

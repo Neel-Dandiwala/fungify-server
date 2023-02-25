@@ -111,7 +111,7 @@ router.post("/add-nft",
         fromBlock: blockNumber - 5,
         toBlock: "latest",
       })
-      .then(function (blockchain_result) {
+      .then(async (blockchain_result) =>{
         for (let i = 0; i < blockchain_result.length; i++) {
           let resultOwner = blockchain_result[i]["returnValues"]["_owner"]
             .toString()
@@ -121,6 +121,27 @@ router.post("/add-nft",
             _owner.toString().trim().toLowerCase();
           if (boolCheck) {
             console.log(blockchain_result[i]);
+            var data = JSON.stringify({
+              "ticker_symbol": name,
+              "nft_owner_address": nftData.user.walletAddress,
+              "face_value": price,
+              "total_shares": shares
+            });
+            
+            var config = {
+              method: 'post',
+            maxBodyLength: Infinity,
+              url: 'https://smact.vercel.app/api/addNewNFTTicker',
+              headers: { 
+                'Content-Type': 'application/json'
+              },
+              data : data
+            };
+          
+            await axios(config)
+              .then(function (response) {
+                console.log(JSON.stringify(response.data));
+              })
             res.status(200).json(blockchain_result[i]);
             return;
           }

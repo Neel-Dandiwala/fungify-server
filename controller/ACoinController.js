@@ -5,6 +5,8 @@ const User = require("../model/user.model");
 
 
 const _transferACoin = async (req, res) => {
+  console.log(req.body)
+  console.log(req.data)
   const _sender = req.body.sender;
   const _receiver = req.body.receiver;
   const _numACoins = req.body.numACoins;
