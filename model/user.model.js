@@ -31,6 +31,9 @@ const userSchema = new mongoose.Schema(
     transaction: {
       type: Array,
     },
+    trades:{
+      type: Array,
+    },
     role: {
       type: String,
       default: "user", // types of users: user, admin
