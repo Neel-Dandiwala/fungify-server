@@ -9,6 +9,7 @@ contract DivisibleNFTs {
     string public constant symbol = "ACNFT"; // Ticker for ACoin
     uint8 public constant decimals = 18; // Precision of use for the ACoin
     mapping(address => uint256) acoinBalances; // ACoin balances of the Traders
+    mapping(address => mapping(address => mapping(string => mapping(uint => uint)))) confirmedPrice;
     uint256 acoinTotalSupply; // Total supply of the ACoin
     address payable owner;
 
@@ -248,10 +249,13 @@ contract DivisibleNFTs {
         address _to,
         string memory _tokenId,
         uint256 _units,
+        uint256 _price,
         address payable _caller
     ) public onlyExistentToken(_tokenId) {
         require(ownerToTokenShare[_from][_tokenId] >= _units);
         // TODO should check _to address to avoid losing tokens units
+
+        confirmedPrice[_from][_to][_tokenId][_units] = _price;
 
         _removeShareFromLastOwner(_from, _tokenId, _units, _caller);
         _removeLastOwnerHoldingsFromToken(_from, _tokenId, _units, _caller);
@@ -262,6 +266,20 @@ contract DivisibleNFTs {
 
         //Transfer(msg.sender, _to, _tokenId, _units); // emit event
     }
+
+    function getPrice(
+        address _from,
+        address _to,
+        string memory _tokenId,
+        uint256 _units
+    ) public view onlyExistentToken(_tokenId) returns(uint) {
+        
+        return confirmedPrice[_from][_to][_tokenId][_units];
+        // emit transferTokenEvent(_from,  _to,  _tokenId,  _units, _caller, "transfer - transfer parts of a token to another user");
+
+        //Transfer(msg.sender, _to, _tokenId, _units); // emit event
+    }
+
 
     // ------------------------------ Helper functions (internal functions) ------------------------------
 
