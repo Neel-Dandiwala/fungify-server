@@ -91,6 +91,7 @@ const _transferToken = async (req, res) => {
   const _to = req.body.to;
   const _tokenId = req.body.tokenId;
   const _units = req.body.units;
+  const _price = req.body.price;
   const _caller = process.env.OWNER_ADDRESS;
   let logs;
 
@@ -101,7 +102,7 @@ const _transferToken = async (req, res) => {
       {}
     );
     var encodedData = divisibleNftsContract.methods
-      .transferToken(_from, _to, _tokenId, _units, _caller)
+      .transferToken(_from, _to, _tokenId, _units, _price, _caller)
       .encodeABI();
 
     const transactionParam = {
@@ -270,6 +271,28 @@ const _divisibilityOfAToken = async (req, res) => {
   return
 };
 
+const _getPrice = async (req, res) => {
+  const _from = req.body.from;
+  const _to = req.body.to;
+  const _tokenId = req.body.tokenId;
+  const _units = req.body.units;
+  const response = await Moralis.EvmApi.utils.runContractFunction({
+    address:process.env.DIVISIBLE_NFTS_ADDRESS,
+    functionName: "getPrice",
+    abi: DivisibleNftsABI.abi,
+    chain: 80001,
+    params: {
+      _from: _from,
+      _to: _to,
+      _tokenId: _tokenId,
+      _units: _units
+    }
+  })
+  console.log(response);
+  res.status(200).json(response);
+  return
+};
+
 const _totalSupplyView = async (req, res) => {
   // const _caller = req.body.caller;
   let logs;
@@ -334,7 +357,7 @@ module.exports = {
   _divisibilityOfAToken,
   _totalSupplyView,
   _unitsOwnedOfAToken,
-  _divisibilityOfTokens
-  
+  _divisibilityOfTokens,
+  _getPrice
 };
 //# sourceMappingURL=DivisibleNFTController.js.map
