@@ -175,7 +175,7 @@ const _buyACoinEvent = async (req, res) => {
     })
     .then(function (blockchain_result) {
       for (let i = 0; i < blockchain_result.length; i++) {
-        let resultAccount = blockchain_result[i]["returnValues"]["_account"]
+        let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
           .toString()
           .replace(/\s/g, "");
         var boolCheck =
