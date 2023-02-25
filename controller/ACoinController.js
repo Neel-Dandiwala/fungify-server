@@ -175,14 +175,14 @@ const _buyACoinEvent = async (req, res) => {
     })
     .then(function (blockchain_result) {
       for (let i = 0; i < blockchain_result.length; i++) {
-        let resultAccount = blockchain_result[i]["returnValues"]["_account"]
+        let resultCaller = blockchain_result[i]["returnValues"]["_caller"]
           .toString()
           .replace(/\s/g, "");
         var boolCheck =
           resultCaller.toString().trim().toLowerCase() === _caller.toString().trim().toLowerCase();
         if (boolCheck) {
           console.log(blockchain_result[i]);
-          console.log(blockchain_result[i]["returnValues"]['_account'])
+          console.log(blockchain_result[i]["returnValues"]['_caller'])
           res.status(200).json(blockchain_result[i]);
           return;
         }
