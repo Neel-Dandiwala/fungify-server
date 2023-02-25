@@ -20,7 +20,7 @@ contract DivisibleNFTs {
 
 	event mintEvent(address _owner, string _tokenId, uint _noOfShares, uint _tokenTotalSupply, address payable _caller, string _message);
 
-	event transferTokenEvent(address _from, address _to, string _tokenId, uint _units, address payable _caller, string _message);
+	event transferTokenEvent(address _from, address _to, string _tokenId, uint _units, string _message);
 
 	event totalSupplyEvent(uint256 _totalSupply, address payable _caller, string _message);
 
@@ -32,19 +32,19 @@ contract DivisibleNFTs {
 	
     event burnACoinINREvent(address _account, uint _numACoins, address payable _caller, string _message);
 
-    event transferACoinEvent(address _from, address _to, uint _numACoins, address payable _caller, string _message);
+    event transferACoinEvent(address _from, address _to, uint _numACoins,  address payable _caller, string _message);
 
 	event getAcoinTotalSupplyEvent( uint _acoinTotalSupply, address payable _caller, string _message);
 
 	event acoinBalanceOfEvent(uint _acoinBalance, address payable _caller, string _message);
 
-    event removeShareEvent(address _owner, string _tokenId, uint256 _units, address payable _caller, string _message);
+    event removeShareEvent(address _owner, string _tokenId, uint256 _units,  string _message);
 
-    event addShareEvent(address _owner, string _tokenId, uint256 _units, address payable _caller, string _message);
+    event addShareEvent(address _owner, string _tokenId, uint256 _units,  string _message);
 
-    event removeOwnerHoldingsEvent(address _owner, string _tokenId, uint256 _units, address payable _caller, string _message);
+    event removeOwnerHoldingsEvent(address _owner, string _tokenId, uint256 _units,  string _message);
 
-    event addOwnerHoldingsEvent(address _owner, string _tokenId, uint256 _units, address payable _caller, string _message);
+    event addOwnerHoldingsEvent(address _owner, string _tokenId, uint256 _units,  string _message);
 
     // ----------------------- Variables for Non Fungible Token Management------------------------
 
@@ -233,8 +233,8 @@ contract DivisibleNFTs {
 
         mintedToken[_tokenId] = true;
 
-        _addShareToNewOwner(_owner, _tokenId, divisibility[_tokenId], _caller);
-        _addNewOwnerHoldingsToToken(_owner, _tokenId, divisibility[_tokenId], _caller);
+        _addShareToNewOwner(_owner, _tokenId, divisibility[_tokenId]);
+        _addNewOwnerHoldingsToToken(_owner, _tokenId, divisibility[_tokenId]);
 
         tokenTotalSupply = tokenTotalSupply + 1;
         emit mintEvent(_owner, _tokenId, _noOfShares, tokenTotalSupply, _caller, "mint - Minting grants 100% of the token to a new owner");
@@ -249,20 +249,19 @@ contract DivisibleNFTs {
         address _to,
         string memory _tokenId,
         uint256 _units,
-        uint256 _price,
-        address payable _caller
-    ) public onlyExistentToken(_tokenId) {
+        uint256 _price
+    ) public {
         require(ownerToTokenShare[_from][_tokenId] >= _units);
         // TODO should check _to address to avoid losing tokens units
 
         confirmedPrice[_from][_to][_tokenId][_units] = _price;
 
-        _removeShareFromLastOwner(_from, _tokenId, _units, _caller);
-        _removeLastOwnerHoldingsFromToken(_from, _tokenId, _units, _caller);
+        _removeShareFromLastOwner(_from, _tokenId, _units);
+        _removeLastOwnerHoldingsFromToken(_from, _tokenId, _units);
 
-        _addShareToNewOwner(_to, _tokenId, _units, _caller);
-        _addNewOwnerHoldingsToToken(_to, _tokenId, _units, _caller);
-        emit transferTokenEvent(_from,  _to,  _tokenId,  _units, _caller, "transfer - transfer parts of a token to another user");
+        _addShareToNewOwner(_to, _tokenId, _units);
+        _addNewOwnerHoldingsToToken(_to, _tokenId, _units);
+        emit transferTokenEvent(_from,  _to,  _tokenId,  _units, "transfer - transfer parts of a token to another user");
 
         //Transfer(msg.sender, _to, _tokenId, _units); // emit event
     }
@@ -287,11 +286,10 @@ contract DivisibleNFTs {
     function _removeShareFromLastOwner(
         address _owner,
         string memory _tokenId,
-        uint256 _units,
-        address payable _caller
+        uint256 _units
     ) internal {
         ownerToTokenShare[_owner][_tokenId] -= _units;
-        emit removeShareEvent(_owner, _tokenId, _units, _caller, "_removeShareFromLastOwner - Remove token units from last owner");
+        emit removeShareEvent(_owner, _tokenId, _units, "_removeShareFromLastOwner - Remove token units from last owner");
 
     }
 
@@ -299,11 +297,10 @@ contract DivisibleNFTs {
     function _addShareToNewOwner(
         address _owner,
         string memory _tokenId,
-        uint256 _units,
-        address payable _caller
+        uint256 _units
     ) internal {
         ownerToTokenShare[_owner][_tokenId] += _units;
-        emit addShareEvent(_owner, _tokenId, _units, _caller, "_addShareToNewOwner - Add token units to new owner");
+        emit addShareEvent(_owner, _tokenId, _units, "_addShareToNewOwner - Add token units to new owner");
 
     }
 
@@ -311,11 +308,10 @@ contract DivisibleNFTs {
     function _removeLastOwnerHoldingsFromToken(
         address _owner,
         string memory _tokenId,
-        uint256 _units,
-        address payable _caller
+        uint256 _units
     ) internal {
         tokenToOwnersHoldings[_tokenId][_owner] -= _units;
-        emit removeOwnerHoldingsEvent(_owner, _tokenId, _units, _caller, "_removeLastOwnerHoldingsFromToken - Remove units from last owner");
+        emit removeOwnerHoldingsEvent(_owner, _tokenId, _units, "_removeLastOwnerHoldingsFromToken - Remove units from last owner");
 
     }
 
@@ -323,11 +319,10 @@ contract DivisibleNFTs {
     function _addNewOwnerHoldingsToToken(
         address _owner,
         string memory _tokenId,
-        uint256 _units,
-        address payable _caller
+        uint256 _units
     ) internal {
         tokenToOwnersHoldings[_tokenId][_owner] += _units;
-        emit addOwnerHoldingsEvent(_owner, _tokenId, _units, _caller, "_addNewOwnerHoldingsToToken - Add the units to new owner");
+        emit addOwnerHoldingsEvent(_owner, _tokenId, _units, "_addNewOwnerHoldingsToToken - Add the units to new owner");
 
     }
 }

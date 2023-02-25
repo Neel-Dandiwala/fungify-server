@@ -1,6 +1,6 @@
 const { web3, DivisibleNftsABI } = require("../web3");
 const Moralis = require("moralis").default;
-
+const Nft = require("../model/nft.model");
 
 const _mint = async (req, res) => {
   const _owner = req.body.owner;
@@ -19,10 +19,12 @@ const _mint = async (req, res) => {
       .mint(_owner, _tokenId, _noOfShares, _caller)
       .encodeABI();
 
+      const gasPrice = await web3().eth.getGasPrice();
+    const gasEstimate = await divisibleNftsContract.methods.mint(_owner, _tokenId, _noOfShares, _caller).estimateGas({});
     const transactionParam = {
       to: process.env.DIVISIBLE_NFTS_ADDRESS,
-      // gas: '0x76c0', // 30400
-      // gasPrice: '0x9184e72a000', // 10000000000000
+      gas: "300000",
+      gasPrice: gasPrice,
       // value: encodedValue,
       data: encodedData,
     };
@@ -35,23 +37,13 @@ const _mint = async (req, res) => {
       .then((signed) => {
         web3()
           .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result, events) {
+          .then(async (blockchain_result, events) => {
             console.log(blockchain_result);
             logs = {
               blockchain_result,
             };
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        logs = {
-          field: "Blockchain Error",
-          message: err,
-        };
-
-        res.status(400).json(logs);
-        return { logs };
-      });
+            var block = await web3().eth.getBlock("latest");
+    var blockNumber = await web3().eth.getBlockNumber();
 
     await divisibleNftsContract
       .getPastEvents("mintEvent", {
@@ -75,6 +67,20 @@ const _mint = async (req, res) => {
         res.status(400).json("No event emitted");
         return;
       });
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+        logs = {
+          field: "Blockchain Error",
+          message: err,
+        };
+
+        res.status(400).json(logs);
+        return { logs };
+      });
+
+      
   } catch (err) {
     console.log(err);
     logs = {
@@ -89,87 +95,103 @@ const _mint = async (req, res) => {
 const _transferToken = async (req, res) => {
   const _from = req.body.from;
   const _to = req.body.to;
-  const _tokenId = req.body.tokenId;
+  const _tokenName = req.body.tokenName;
   const _units = req.body.units;
   const _price = req.body.price;
   const _caller = process.env.OWNER_ADDRESS;
   let logs;
-
-  try {
-    const divisibleNftsContract = new (web3().eth.Contract)(
-      DivisibleNftsABI.abi,
-      process.env.DIVISIBLE_NFTS_ADDRESS,
-      {}
-    );
-    var encodedData = divisibleNftsContract.methods
-      .transferToken(_from, _to, _tokenId, _units, _price, _caller)
-      .encodeABI();
-
-    const transactionParam = {
-      to: process.env.DIVISIBLE_NFTS_ADDRESS,
-      // gas: '0x76c0', // 30400
-      // gasPrice: '0x9184e72a000', // 10000000000000
-      // value: encodedValue,
-      data: encodedData,
-    };
-
-    await web3()
-      .eth.accounts.signTransaction(
-        transactionParam,
-        process.env.OWNER_PRIVATE_KEY
-      )
-      .then((signed) => {
-        web3()
-          .eth.sendSignedTransaction(signed.rawTransaction)
-          .then(function (blockchain_result, events) {
-            console.log(blockchain_result);
-            logs = {
-              blockchain_result,
-            };
+  let _tokenId;
+ 
+    await Nft.findOne({ name: _tokenName}).exec(async (err,data) => {
+      if(!data) {
+        res.status(400).json({ message: "Bad Mongo Error"})
+      }
+      _tokenId = data.tokenId;
+      console.log(_tokenId);
+      try {
+        const divisibleNftsContract = new (web3().eth.Contract)(
+          DivisibleNftsABI.abi,
+          process.env.DIVISIBLE_NFTS_ADDRESS,
+          {}
+        );
+        if(_tokenId) {
+          var encodedData = divisibleNftsContract.methods.transferToken(_from, _to, _tokenId, _units, _price).encodeABI();
+          const gasPrice = await web3().eth.getGasPrice();
+          const gasEstimate = await divisibleNftsContract.methods.transferToken(_from, _to, _tokenId, _units, _price).estimateGas({});
+          const transactionParam = {
+            to: process.env.DIVISIBLE_NFTS_ADDRESS,
+            gas: "300000",
+            gasPrice: gasPrice,
+            // value: encodedValue,
+            data: encodedData,
+          };
+      
+          await web3()
+            .eth.accounts.signTransaction(
+              transactionParam,
+              process.env.OWNER_PRIVATE_KEY
+            )
+            .then((signed) => {
+              web3()
+                .eth.sendSignedTransaction(signed.rawTransaction)
+                .then( async (blockchain_result, events) => {
+                  console.log(blockchain_result);
+                  logs = {
+                    blockchain_result,
+                  };
+                  var block = await web3().eth.getBlock("latest");
+          var blockNumber = await web3().eth.getBlockNumber();
+    
+        await divisibleNftsContract
+          .getPastEvents("transferTokenEvent", {
+            fromBlock: blockNumber - 5,
+            toBlock: "latest",
+          })
+          .then(function (blockchain_result) {
+            for (let i = 0; i < blockchain_result.length; i++) {
+              let resultFrom = blockchain_result[i]["returnValues"]["_from"]
+                .toString()
+                .replace(/\s/g, "");
+              var boolCheck =
+                resultFrom.toString().trim().toLowerCase() ===
+                _from.toString().trim().toLowerCase();
+              if (boolCheck) {
+                console.log(blockchain_result[i]);
+                res.status(200).json(blockchain_result[i]);
+                return;
+              }
+            }
+            res.status(400).json("No event emitted");
+            return;
           });
-      })
-      .catch((err) => {
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+              logs = {
+                field: "Blockchain Error",
+                message: err,
+              };
+      
+              res.status(400).json(logs);
+              return { logs };
+            });
+        }
+        
+       
+      } catch (err) {
         console.log(err);
         logs = {
-          field: "Blockchain Error",
+          field: "Blockchain Unknown Error",
           message: err,
         };
-
         res.status(400).json(logs);
         return { logs };
-      });
-
-    await divisibleNftsContract
-      .getPastEvents("transferTokenEvent", {
-        fromBlock: blockNumber - 5,
-        toBlock: "latest",
-      })
-      .then(function (blockchain_result) {
-        for (let i = 0; i < blockchain_result.length; i++) {
-          let resultFrom = blockchain_result[i]["returnValues"]["_from"]
-            .toString()
-            .replace(/\s/g, "");
-          var boolCheck =
-            resultFrom.toString().trim().toLowerCase() ===
-            _from.toString().trim().toLowerCase();
-          if (boolCheck) {
-            console.log(blockchain_result[i]);
-            res.status(200).json(blockchain_result[i]);
-            return;
-          }
-        }
-        res.status(400).json("No event emitted");
-        return;
-      });
-  } catch (err) {
-    console.log(err);
-    logs = {
-      field: "Blockchain Unknown Error",
-      message: err,
-    };
-    res.status(400).json(logs);
-    return { logs };
-  }
+      }
+    });
+  
+    
+  
 };
 
 const _divisibilityOfATokenTemp = async (req, res) => {

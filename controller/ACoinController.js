@@ -3,11 +3,12 @@ const Moralis = require("moralis").default;
 const axios = require("axios");
 const User = require("../model/user.model");
 
+
 const _transferACoin = async (req, res) => {
   const _sender = req.body.sender;
   const _receiver = req.body.receiver;
   const _numACoins = req.body.numACoins;
-  const _caller = req.body.caller;
+  const _caller = process.env.OWNER_ADDRESS;
   let logs;
 
   try {
