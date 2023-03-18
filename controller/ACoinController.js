@@ -6,7 +6,7 @@ const User = require("../model/user.model");
 
 const _transferACoin = async (req, res) => {
   console.log(req.body)
-  console.log(req.data)
+  // console.log(req.data)
   const _sender = req.body.sender;
   const _receiver = req.body.receiver;
   const _numACoins = req.body.numACoins;
@@ -772,7 +772,7 @@ const _fetchUserTransactions = async (req, res) => {
       res.status(400).json(err);
       return;
     }
-    console.log(res);
+    // console.log(res);
     res.status(200).json(data);
     return;
   });

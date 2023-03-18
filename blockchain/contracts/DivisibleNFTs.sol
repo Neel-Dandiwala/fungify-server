@@ -22,6 +22,8 @@ contract DivisibleNFTs {
 
 	event transferTokenEvent(address _from, address _to, string _tokenId, uint _units, string _message);
 
+	event transferNftShareEvent(address _from, address _to, string _tokenId, uint _units, uint _amount, string _message);
+
 	event totalSupplyEvent(uint256 _totalSupply, address payable _caller, string _message);
 
 	event buyACoinEvent(address _account, uint _numACoins, address payable _caller, string _message);
@@ -192,10 +194,10 @@ contract DivisibleNFTs {
 	    return divisibility[_tokenId];
 	}
 
-    function divisibilityOfTokens(string[] memory _tokenIds) public view returns (uint[] memory _divisiblities) {
+    function divisibilityOfTokens(string[] memory _tokenIds, address[] memory _ownerAddresses) public view returns (uint[] memory _divisiblities) {
         uint[] memory divisiblities = new uint[](_tokenIds.length);
         for(uint i = 0; i < _tokenIds.length; i++) {
-            divisiblities[i] = divisibility[_tokenIds[i]];
+            divisiblities[i] = tokenToOwnersHoldings[_tokenIds[i]][_ownerAddresses[i]];
         }
 
         return divisiblities;
@@ -264,6 +266,32 @@ contract DivisibleNFTs {
         emit transferTokenEvent(_from,  _to,  _tokenId,  _units, "transfer - transfer parts of a token to another user");
 
         //Transfer(msg.sender, _to, _tokenId, _units); // emit event
+    }
+
+    function transferNftShare(
+        address _from,
+        address _to,
+        string memory _tokenId,
+        uint256 _units,
+        uint256 _price,
+        uint256 _amount
+    ) public {
+        require(ownerToTokenShare[_from][_tokenId] >= _units);
+        require(_amount <= acoinBalances[_to]);
+
+        acoinBalances[_to] = acoinBalances[_to].sub(_amount);
+        acoinBalances[_from] = acoinBalances[_from].add(_amount);
+        // TODO should check _to address to avoid losing tokens units
+
+        confirmedPrice[_from][_to][_tokenId][_units] = _price;
+
+        _removeShareFromLastOwner(_from, _tokenId, _units);
+        _removeLastOwnerHoldingsFromToken(_from, _tokenId, _units);
+
+        _addShareToNewOwner(_to, _tokenId, _units);
+        _addNewOwnerHoldingsToToken(_to, _tokenId, _units);
+        emit transferNftShareEvent( _from, _to, _tokenId, _units, _amount, "transferNftShare");    
+        
     }
 
     function getPrice(

@@ -154,12 +154,12 @@ const _transferToken = async (req, res) => {
           })
           .then(function (blockchain_result) {
             for (let i = 0; i < blockchain_result.length; i++) {
-              let resultFrom = blockchain_result[i]["returnValues"]["_from"]
+              let resultFrom = blockchain_result[i]["returnValues"]["_caller"]
                 .toString()
                 .replace(/\s/g, "");
               var boolCheck =
                 resultFrom.toString().trim().toLowerCase() ===
-                _from.toString().trim().toLowerCase();
+                _caller.toString().trim().toLowerCase();
               if (boolCheck) {
                 console.log(blockchain_result[i]);
                 res.status(200).json(blockchain_result[i]);
@@ -360,6 +360,7 @@ const _unitsOwnedOfAToken = async (req, res) => {
 
 const _divisibilityOfTokens = async (req, res) => {
   const _tokenIds = req.body.tokenIds;
+  const _ownerAddresses = req.body.ownerAddresses;
   let logs;
 
   const response = await Moralis.EvmApi.utils.runContractFunction({
@@ -368,7 +369,8 @@ const _divisibilityOfTokens = async (req, res) => {
     abi: DivisibleNftsABI.abi,
     chain: 80001,
     params: {
-      _tokenIds: _tokenIds
+      _tokenIds: _tokenIds,
+      _ownerAddresses: _ownerAddresses
     }
   })
   console.log(response);
@@ -376,6 +378,107 @@ const _divisibilityOfTokens = async (req, res) => {
   return
 };
 
+const _transferNftShare = async (req, res) => {
+  console.log(req.body)
+  const _from = req.body.from;
+  const _to = req.body.to;
+  const _tokenName = req.body.tokenName;
+  const _units = req.body.units;
+  const _price = req.body.price;
+  const _amount = req.body.amount;
+  console.log(_from, _to, _tokenName, _units, _price, _amount);
+  let logs;
+  let _tokenId;
+ 
+    await Nft.findOne({ name: _tokenName}).exec(async (err,data) => {
+      if(!data) {
+        res.status(400).json({ message: "Bad Mongo Error"})
+      }
+      _tokenId = data.tokenId;
+      console.log(_tokenId);
+      try {
+        const divisibleNftsContract = new (web3().eth.Contract)(
+          DivisibleNftsABI.abi,
+          process.env.DIVISIBLE_NFTS_ADDRESS,
+          {}
+        );
+        if(_tokenId) {
+          var encodedData = divisibleNftsContract.methods.transferNftShare(_from, _to, _tokenId, _units, _price, _amount).encodeABI();
+          const gasPrice = await web3().eth.getGasPrice();
+          const gasEstimate = await divisibleNftsContract.methods.transferNftShare(_from, _to, _tokenId, _units, _price, _amount).estimateGas({});
+          const transactionParam = {
+            to: process.env.DIVISIBLE_NFTS_ADDRESS,
+            gas: "300000",
+            gasPrice: gasPrice,
+            // value: encodedValue,
+            data: encodedData,
+          };
+      
+          await web3().eth.accounts.signTransaction(
+              transactionParam,
+              process.env.OWNER_PRIVATE_KEY
+            )
+            .then((signed) => {
+              web3().eth.sendSignedTransaction(signed.rawTransaction)
+                .then( async (blockchain_result, events) => {
+                  console.log(blockchain_result);
+                  logs = {
+                    blockchain_result,
+                  };
+                  var block = await web3().eth.getBlock("latest");
+          var blockNumber = await web3().eth.getBlockNumber();
+    
+        await divisibleNftsContract
+          .getPastEvents("transferNftShareEvent", {
+            fromBlock: blockNumber - 5,
+            toBlock: "latest",
+          })
+          .then(function (blockchain_result) {
+            for (let i = 0; i < blockchain_result.length; i++) {
+              let resultFrom = blockchain_result[i]["returnValues"]["_from"]
+                .toString()
+                .replace(/\s/g, "");
+              var boolCheck =
+                resultFrom.toString().trim().toLowerCase() ===
+                _from.toString().trim().toLowerCase();
+              if (boolCheck) {
+                console.log(blockchain_result[i]);
+                res.status(200).json(blockchain_result[i]);
+                return;
+              }
+            }
+            res.status(400).json("No event emitted");
+            return;
+          });
+                });
+            })
+            .catch((err) => {
+              console.log(err);
+              logs = {
+                field: "Blockchain Error",
+                message: err,
+              };
+      
+              res.status(400).json(logs);
+              return { logs };
+            });
+        }
+        
+       
+      } catch (err) {
+        console.log(err);
+        logs = {
+          field: "Blockchain Unknown Error",
+          message: err,
+        };
+        res.status(400).json(logs);
+        return { logs };
+      }
+    });
+  
+    
+  
+};
 
 module.exports = {
   _mint,
@@ -385,6 +488,7 @@ module.exports = {
   _totalSupplyView,
   _unitsOwnedOfAToken,
   _divisibilityOfTokens,
-  _getPrice
+  _getPrice,
+  _transferNftShare
 };
 //# sourceMappingURL=DivisibleNFTController.js.map
